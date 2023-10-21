@@ -1,0 +1,10 @@
+{
+    "name": "@buckydev/advanced-peripherals",
+    "version": "0.0.1",
+    "description": "TypeScript type definitions for the Advanced Peripherals",
+    "types": "index.d.ts",
+    "files": ["**/*.d.ts"],
+    "author": "Buckydev",
+    "license": "MIT"
+}
+
