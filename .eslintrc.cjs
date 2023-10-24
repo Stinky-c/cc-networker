@@ -5,7 +5,6 @@ module.exports = {
   plugins: ['@typescript-eslint'],
   root: true,
   "rules": {
-    "@typescript-eslint/strict-boolean-expressions": "error",
     "eqeqeq": "error"
   }
 };

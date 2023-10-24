@@ -8,6 +8,7 @@
         "moduleResolution": "node",
         "strict": true,
         "types": [
+            "@typescript-to-lua/language-extensions",
             "@jackmacwindows/lua-types/cc",
             "@jackmacwindows/craftos-types",
             "@jackmacwindows/cc-types"

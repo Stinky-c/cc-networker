@@ -1,0 +1,15 @@
+{
+    "name": "@buckydev/cc-basalt-types",
+    "version": "1.0.0",
+    "description": "TypeScript type definitions for the basalt UI library.",
+    "types": "index.d.ts",
+    "files": [
+        "./*.d.ts",
+        "./container/*.d.ts"
+    ],
+    "author": "buckydev",
+    "license": "MIT",
+    "dependencies": {
+        "@jackmacwindows/craftos-types": "^1.1.1"
+    }
+}

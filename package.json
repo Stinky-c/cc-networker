@@ -15,6 +15,7 @@
     "@jackmacwindows/lua-types": "^2.13.1",
     "@typescript-eslint/eslint-plugin": "^6.8.0",
     "@typescript-eslint/parser": "^6.8.0",
+    "@typescript-to-lua/language-extensions": "^1.19.0",
     "eslint": "^8.51.0",
     "prettier": "3.0.3",
     "typescript": "^5.2.2"
