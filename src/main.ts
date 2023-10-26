@@ -1,27 +1,35 @@
 /** @noSelfInFile **/
 import { ModemManager } from "./lib/network";
-import { NetworkerSettings } from "./lib/settings";
+import { NetworkerSettings, SettingsKeys } from "./lib/settings";
 import * as netType from "./lib/networkTypes";
+import { AppState } from "./lib/types";
 
 NetworkerSettings.Load();
-NetworkerSettings.Define();
+
+let state: AppState = { lastHeartbeatResponse: 0 };
+let UID = NetworkerSettings.Get(SettingsKeys.uid);
 
 // TODO: spilt to seperate file?
-let dummiesGuideToResponding: netType.ResponseMapping = new Map([
+const requestMapping: netType.RequestMapping = new Map([
   [
     "HeartBeatRequest",
     (_message, sendMessage) => {
-      let message = _message as netType.HeartBeatRequest;
+      const message = _message as netType.HeartBeatRequest;
+      sendMessage({
+        sender: UID,
+        recipent: message.sender,
+        type: "HeartBeatResponse",
+      } as netType.HeartBeatResponse);
       print(`i see ${message.sender}'s heartbeat`);
     },
   ],
   [
     "RoleAcquisitionRequest",
     (_message, sendMessage) => {
-      let message = _message as netType.RoleAcquisitionRequest;
+      const message = _message as netType.RoleAcquisitionRequest;
       print(`i see ${message.sender}'s role request. Denying...`);
       sendMessage({
-        sender: os.computerID(),
+        sender: UID,
         recipent: message.sender,
         type: "RoleAcquisitionResponse",
       } as netType.RoleAcquisitionResponse);
@@ -29,10 +37,27 @@ let dummiesGuideToResponding: netType.ResponseMapping = new Map([
   ],
 ]);
 
+const responseMapping: netType.ResponseMapping = new Map([
+  [
+    "HeartBeatResponse",
+    (_message, sendMessage) => {
+      const message = _message as netType.HeartBeatResponse;
+      let time = os.time();
+      state.lastHeartbeatResponse = time;
+      print(`Got heartbeat at ${time}`);
+    },
+  ],
+]);
+
 const modem = new ModemManager({
-  broadcastChannel: 7701,
-  replyChannel: 7704,
-  responseHandlers: dummiesGuideToResponding,
+  broadcastChannel: NetworkerSettings.Get(
+    SettingsKeys.broadcastChannel
+  ) as number,
+  replyChannel: NetworkerSettings.Get(SettingsKeys.replyChannel) as number,
+  responseHandlers: new Map([
+    ...requestMapping.entries(),
+    ...responseMapping.entries(),
+  ]),
 });
 
 // os.sleep(10);
@@ -51,13 +76,12 @@ parallel.waitForAll(
     modem.handleMessage();
   },
   () => {
-    modem.heartbeat();
+    modem.heartbeat(15);
   }
 );
 
 /*
 TODO: respond to heartbeat?
-  respond to `RoleAcquisitionRequest`
   "encrypt" messages sent?
   main.lua dedicated for gui if there is one
 

@@ -1,17 +1,23 @@
-settings.load();
-const URL: string = settings.get("networker-downloadurl", "..."); // Do not include trailing slash // TODO: figure out how to serve files
+if (!fs.exists("/.dev")) {
+  error(
+    "This is a dev file, and can be safely delete. Please see repo readme to create dev environment or contribute back."
+  );
+}
+const URL: string = "http://localhost:9001"; // Do not include trailing slash
 
-let index: Array<{ dest: string; uri: string }> = [
+const index: Array<{ dest: string; uri: string }> = [
   { dest: "main.lua", uri: "/main.lua" },
   { dest: "lualib_bundle.lua", uri: "/lualib_bundle.lua" },
+
   { dest: "lib/event.lua", uri: "/lib/event.lua" },
-  { dest: "lib/settings.lua", uri: "/lib/settings.lua" },
   { dest: "lib/network.lua", uri: "/lib/network.lua" },
-  { dest: "lib/misc.lua", uri: "/lib/misc.lua" },
+  { dest: "lib/settings.lua", uri: "/lib/settings.lua" },
+  { dest: "lib/types.lua", uri: "/lib/types.lua" },
+  { dest: "lib/utils.lua", uri: "/lib/utils.lua" },
 ];
 
 function download(this: void, dest: string, url: string) {
-  let res = http.get({
+  const res = http.get({
     url: url,
     redirect: true,
     headers: new Map([
@@ -20,9 +26,9 @@ function download(this: void, dest: string, url: string) {
     ]),
   } as RequestOptions);
   if (res[0] !== null) {
-    let req = res[0] as HTTPResponse;
-    let data = req.readAll();
-    let file = fs.open(dest, "w");
+    const req = res[0] as HTTPResponse;
+    const data = req.readAll();
+    const file = fs.open(dest, "w");
     if (file[0] === null) {
       error(`Could not open file '${dest}'`);
     }
@@ -37,8 +43,8 @@ function download(this: void, dest: string, url: string) {
 }
 
 index.forEach((file) => {
-  let dest = file.dest;
-  let url = URL + file.uri;
+  const dest = file.dest;
+  const url = URL + file.uri;
 
   if (fs.exists(dest)) {
     // print(`'${dest}' exists. Overwriting now...`);

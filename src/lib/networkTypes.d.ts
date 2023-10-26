@@ -1,5 +1,4 @@
 /** @noSelfInFile **/
-import { ModemManager } from "./network";
 
 /// Common types
 export interface CommonMessage {
@@ -8,19 +7,18 @@ export interface CommonMessage {
   recipent?: number;
 }
 
-export type FullModemMessage = {
-  recipent?: number;
+export interface FullModemMessage {
   message: CommonMessage;
   replyChannel: number;
-};
+}
 
 /// Common Request Base
 interface CommonMessageRequest extends CommonMessage {}
 
 /// Request types
-export interface HeartBeatRequest extends CommonMessage {}
+export interface HeartBeatRequest extends CommonMessageRequest {}
 
-export interface RoleAcquisitionRequest extends CommonMessage {
+export interface RoleAcquisitionRequest extends CommonMessageRequest {
   assumeRole: false;
 }
 
@@ -28,17 +26,28 @@ export interface RoleAcquisitionRequest extends CommonMessage {
 interface CommonMessageResponse extends CommonMessage {}
 
 /// Response Types
-export interface RoleAcquisitionResponse extends CommonMessage {
+export interface RoleAcquisitionResponse extends CommonMessageResponse {
   assumeRole: false;
 }
 
+export interface HeartBeatResponse extends CommonMessageResponse {}
+
 /// Extras
 
-export type ResponseMapping = Map<
+export type MessageMapping = Map<
   string,
   (
     this: void,
-    message: CommonMessage,
-    sendMessage: (message: CommonMessage) => void
+    message: CommonMessageRequest,
+    sendMessage: (message: CommonMessageResponse) => void
   ) => void
 >;
+/**
+ * Request from other computers
+ */
+export type RequestMapping = MessageMapping;
+
+/**
+ * Response to my requests
+ */
+export type ResponseMapping = MessageMapping;

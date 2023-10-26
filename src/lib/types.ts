@@ -12,3 +12,7 @@ export enum NetworkerRole {
   master,
   slave,
 }
+
+export interface AppState {
+  lastHeartbeatResponse: number;
+}

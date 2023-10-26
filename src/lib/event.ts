@@ -1,5 +1,4 @@
-// You may comment out any events you don't need to save space. Make sure to
-// delete them from eventInitializers as well.
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export interface IEvent {
   get_name(): string;
@@ -15,9 +14,9 @@ export class CharEvent implements IEvent {
     return [this.character];
   }
   public static init(args: any[]): IEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) != "char")
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "char")
       return null;
-    let ev = new CharEvent();
+    const ev = new CharEvent();
     ev.character = args[1] as string;
     return ev;
   }
@@ -36,12 +35,12 @@ export class KeyEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "key" && (args[0] as string) != "key_up")
+      ((args[0] as string) !== "key" && (args[0] as string) !== "key_up")
     )
       return null;
-    let ev = new KeyEvent();
+    const ev = new KeyEvent();
     ev.key = args[1] as number;
-    ev.isUp = (args[0] as string) == "key_up";
+    ev.isUp = (args[0] as string) === "key_up";
     ev.isHeld = ev.isUp ? false : (args[2] as boolean);
     return ev;
   }
@@ -56,9 +55,9 @@ export class PasteEvent implements IEvent {
     return [this.text as any];
   }
   public static init(args: any[]): IEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) != "paste")
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "paste")
       return null;
-    let ev = new PasteEvent();
+    const ev = new PasteEvent();
     ev.text = args[1] as string;
     return ev;
   }
@@ -76,12 +75,12 @@ export class TimerEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "timer" && (args[0] as string) != "alarm")
+      ((args[0] as string) !== "timer" && (args[0] as string) !== "alarm")
     )
       return null;
-    let ev = new TimerEvent();
+    const ev = new TimerEvent();
     ev.id = args[1] as number;
-    ev.isAlarm = (args[0] as string) == "alarm";
+    ev.isAlarm = (args[0] as string) === "alarm";
     return ev;
   }
 }
@@ -101,10 +100,10 @@ export class TaskCompleteEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      (args[0] as string) != "task_complete"
+      (args[0] as string) !== "task_complete"
     )
       return null;
-    let ev = new TaskCompleteEvent();
+    const ev = new TaskCompleteEvent();
     ev.id = args[1] as number;
     ev.success = args[2] as boolean;
     if (ev.success) {
@@ -126,9 +125,9 @@ export class RedstoneEvent implements IEvent {
     return [];
   }
   public static init(args: any[]): IEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) != "redstone")
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "redstone")
       return null;
-    let ev = new RedstoneEvent();
+    const ev = new RedstoneEvent();
     return ev;
   }
 }
@@ -141,9 +140,9 @@ export class TerminateEvent implements IEvent {
     return [];
   }
   public static init(args: any[]): IEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) != "terminate")
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "terminate")
       return null;
-    let ev = new TerminateEvent();
+    const ev = new TerminateEvent();
     return ev;
   }
 }
@@ -160,12 +159,12 @@ export class DiskEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "disk" && (args[0] as string) != "disk_eject")
+      ((args[0] as string) !== "disk" && (args[0] as string) !== "disk_eject")
     )
       return null;
-    let ev = new DiskEvent();
+    const ev = new DiskEvent();
     ev.side = args[1] as string;
-    ev.eject = (args[0] as string) == "disk_eject";
+    ev.eject = (args[0] as string) === "disk_eject";
     return ev;
   }
 }
@@ -182,13 +181,13 @@ export class PeripheralEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "peripheral" &&
-        (args[0] as string) != "peripheral_detach")
+      ((args[0] as string) !== "peripheral" &&
+        (args[0] as string) !== "peripheral_detach")
     )
       return null;
-    let ev = new PeripheralEvent();
+    const ev = new PeripheralEvent();
     ev.side = args[1] as string;
-    ev.detach = (args[0] as string) == "peripheral_detach";
+    ev.detach = (args[0] as string) === "peripheral_detach";
     return ev;
   }
 }
@@ -206,10 +205,10 @@ export class RednetMessageEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      (args[0] as string) != "rednet_message"
+      (args[0] as string) !== "rednet_message"
     )
       return null;
-    let ev = new RednetMessageEvent();
+    const ev = new RednetMessageEvent();
     ev.sender = args[1] as number;
     ev.message = args[2];
     ev.protocol = args[3] as string;
@@ -238,7 +237,7 @@ export class ModemMessageEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (typeof args[0] !== "string" || (args[0] as string) !== "modem_message")
       return null;
-    let ev = new ModemMessageEvent();
+    const ev = new ModemMessageEvent();
     ev.side = args[1] as string;
     ev.channel = args[2] as number;
     ev.replyChannel = args[3] as number;
@@ -253,30 +252,30 @@ export class HTTPEvent implements IEvent {
   public handle: HTTPResponse | null = null;
   public error: string | null = null;
   public get_name() {
-    return this.error == null ? "http_success" : "http_failure";
+    return this.error === null ? "http_success" : "http_failure";
   }
   public get_args() {
     return [
       this.url,
-      this.error == null ? this.handle : this.error,
-      this.error != null ? this.handle : null,
+      this.error === null ? this.handle : this.error,
+      this.error !== null ? this.handle : null,
     ];
   }
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "http_success" &&
-        (args[0] as string) != "http_failure")
+      ((args[0] as string) !== "http_success" &&
+        (args[0] as string) !== "http_failure")
     )
       return null;
-    let ev = new HTTPEvent();
+    const ev = new HTTPEvent();
     ev.url = args[1] as string;
-    if ((args[0] as string) == "http_success") {
+    if ((args[0] as string) === "http_success") {
       ev.error = null;
       ev.handle = args[2] as HTTPResponse;
     } else {
       ev.error = args[2] as string;
-      if (ev.error == null) ev.error = "";
+      if (ev.error === null) ev.error = "";
       ev.handle = args[3] as HTTPResponse;
     }
     return ev;
@@ -287,20 +286,20 @@ export class WebSocketEvent implements IEvent {
   public handle: WebSocket | null = null;
   public error: string | null = null;
   public get_name() {
-    return this.error == null ? "websocket_success" : "websocket_failure";
+    return this.error === null ? "websocket_success" : "websocket_failure";
   }
   public get_args() {
-    return [this.handle == null ? this.error : this.handle];
+    return [this.handle === null ? this.error : this.handle];
   }
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "websocket_success" &&
-        (args[0] as string) != "websocket_failure")
+      ((args[0] as string) !== "websocket_success" &&
+        (args[0] as string) !== "websocket_failure")
     )
       return null;
-    let ev = new WebSocketEvent();
-    if ((args[0] as string) == "websocket_success") {
+    const ev = new WebSocketEvent();
+    if ((args[0] as string) === "websocket_success") {
       ev.handle = args[1] as WebSocket;
       ev.error = null;
     } else {
@@ -338,36 +337,36 @@ export class MouseEvent implements IEvent {
   }
   public get_args() {
     return [
-      this.type == MouseEventType.Touch ? this.side : this.button,
+      this.type === MouseEventType.Touch ? this.side : this.button,
       this.x,
       this.y,
     ];
   }
   public static init(args: any[]): IEvent | null {
     if (!(typeof args[0] === "string")) return null;
-    let ev = new MouseEvent();
+    const ev = new MouseEvent();
     const type = args[0] as string;
-    if (type == "mouse_click") {
+    if (type === "mouse_click") {
       ev.type = MouseEventType.Click;
       ev.button = args[1] as number;
       ev.side = null;
-    } else if (type == "mouse_up") {
+    } else if (type === "mouse_up") {
       ev.type = MouseEventType.Up;
       ev.button = args[1] as number;
       ev.side = null;
-    } else if (type == "mouse_scroll") {
+    } else if (type === "mouse_scroll") {
       ev.type = MouseEventType.Scroll;
       ev.button = args[1] as number;
       ev.side = null;
-    } else if (type == "mouse_drag") {
+    } else if (type === "mouse_drag") {
       ev.type = MouseEventType.Drag;
       ev.button = args[1] as number;
       ev.side = null;
-    } else if (type == "monitor_touch") {
+    } else if (type === "monitor_touch") {
       ev.type = MouseEventType.Touch;
       ev.button = 0;
       ev.side = args[1] as string;
-    } else if (type == "mouse_move") {
+    } else if (type === "mouse_move") {
       ev.type = MouseEventType.Move;
       ev.button = args[1] as number;
       ev.side = null;
@@ -381,7 +380,7 @@ export class MouseEvent implements IEvent {
 export class ResizeEvent implements IEvent {
   public side: string | null = null;
   public get_name() {
-    return this.side == null ? "term_resize" : "monitor_resize";
+    return this.side === null ? "term_resize" : "monitor_resize";
   }
   public get_args() {
     return [this.side];
@@ -389,12 +388,12 @@ export class ResizeEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      ((args[0] as string) != "term_resize" &&
-        (args[0] as string) != "monitor_resize")
+      ((args[0] as string) !== "term_resize" &&
+        (args[0] as string) !== "monitor_resize")
     )
       return null;
-    let ev = new ResizeEvent();
-    if ((args[0] as string) == "monitor_resize") ev.side = args[1] as string;
+    const ev = new ResizeEvent();
+    if ((args[0] as string) === "monitor_resize") ev.side = args[1] as string;
     else ev.side = null;
     return ev;
   }
@@ -410,10 +409,10 @@ export class TurtleInventoryEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      (args[0] as string) != "turtle_inventory"
+      (args[0] as string) !== "turtle_inventory"
     )
       return null;
-    let ev = new TurtleInventoryEvent();
+    const ev = new TurtleInventoryEvent();
     return ev;
   }
 }
@@ -429,10 +428,10 @@ class SpeakerAudioEmptyEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      (args[0] as string) != "speaker_audio_empty"
+      (args[0] as string) !== "speaker_audio_empty"
     )
       return null;
-    let ev = new SpeakerAudioEmptyEvent();
+    const ev = new SpeakerAudioEmptyEvent();
     ev.side = args[1] as string;
     return ev;
   }
@@ -449,10 +448,10 @@ class ComputerCommandEvent implements IEvent {
   public static init(args: any[]): IEvent | null {
     if (
       !(typeof args[0] === "string") ||
-      (args[0] as string) != "computer_command"
+      (args[0] as string) !== "computer_command"
     )
       return null;
-    let ev = new ComputerCommandEvent();
+    const ev = new ComputerCommandEvent();
     ev.args = args.slice(1);
     return ev;
   }
@@ -473,9 +472,9 @@ export class ChatEvent implements IEvent {
     return [];
   }
   public static init(args: any[]): IEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) != "chat")
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "chat")
       return null;
-    let ev = new ChatEvent();
+    const ev = new ChatEvent();
     ev.username = args[1] as string;
     ev.message = args[2] as string;
     ev.uuid = args[3] as string;
@@ -491,7 +490,7 @@ class Event implements IEvent {
     public get_name() {return "";}
     public get_args() {return [(: any)];}
     public static init(args: any[]): IEvent | null {
-        if (!(typeof args[0] === "string") || (args[0] as string) != "") return null;
+        if (!(typeof args[0] === "string") || (args[0] as string) !=="") return null;
         let ev: Event;
 
         return ev;
@@ -508,13 +507,13 @@ export class GenericEvent implements IEvent {
     return this.args.slice(1);
   }
   public static init(args: any[]): IEvent | null {
-    let ev = new GenericEvent();
+    const ev = new GenericEvent();
     ev.args = args;
     return ev;
   }
 }
 
-let eventInitializers: ((args: any[]) => IEvent | null)[] = [
+const eventInitializers: ((args: any[]) => IEvent | null)[] = [
   CharEvent.init,
   KeyEvent.init,
   PasteEvent.init,
@@ -538,17 +537,17 @@ let eventInitializers: ((args: any[]) => IEvent | null)[] = [
   ChatEvent.init,
 ];
 
-type Constructor<T extends {} = {}> = new (...args: any[]) => T;
+type Constructor<T extends object = object> = new (...args: any[]) => T;
 export function pullEventRaw(filter: string | null = null): IEvent | null {
-  let args: any[] = coroutine.yield(filter);
-  for (let init of eventInitializers) {
-    let ev = init(args);
+  const args: any[] = coroutine.yield(filter);
+  for (const init of eventInitializers) {
+    const ev = init(args);
     if (ev !== null) return ev;
   }
   return GenericEvent.init(args);
 }
 export function pullEvent(filter: string | null = null): IEvent | null {
-  let ev = pullEventRaw(filter);
+  const ev = pullEventRaw(filter);
   if (ev instanceof TerminateEvent) throw "Terminated";
   return ev;
 }
@@ -556,7 +555,7 @@ export function pullEventRawAs<T extends IEvent>(
   type: Constructor<T>,
   filter: string | null = null
 ): T | null {
-  let ev = pullEventRaw(filter);
+  const ev = pullEventRaw(filter);
   if (ev instanceof type) return ev as T;
   else return null;
 }
@@ -564,7 +563,7 @@ export function pullEventAs<T extends IEvent>(
   type: Constructor<T>,
   filter: string | null = null
 ): T | null {
-  let ev = pullEvent(filter);
+  const ev = pullEvent(filter);
   if (ev instanceof type) return ev as T;
   else return null;
 }

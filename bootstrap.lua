@@ -1,13 +1,11 @@
-settings.load()
-local url = settings.get("networker-downloadurl", "...") -- May not end with a slash // TODO: figure out how to serve files
-
-fs.delete("/lualib_bundle.lua")
-fs.delete("/download.lua")
-fs.delete("/basalt.lua")
+local URL = "https://cdn.jsdelivr.net/gh/Stinky-c/cc-networker@master"
 
 -- Download networker downloader
-shell.run("wget " .. url .. "/lualib_bundle.lua")
-shell.run("wget " .. url .. "/download.lua")
+shell.run("wget " .. URL .. "/lualib_bundle.lua")
+shell.run("wget " .. URL .. "/download.lua")
 
 -- Download basalt minified
 shell.run("wget run https://basalt.madefor.cc/install.lua packed /basalt.lua")
+
+-- Download jackmacwindow's tar library
+shell.run("wget https://cdn.jsdelivr.net/gh/MCJack123/CC-Archive@master/tar.lua /bin/tar.lua")

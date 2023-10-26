@@ -1,6 +1,6 @@
 # CC-networker
 
-Uses CC:Tweaked modems to communicate to a primary manager for use in displaying data
+Uses CC:Tweaked modems to communicate to a primary manager for use in displaying data ingame or what ever else
 
 ## Project layout
 
@@ -11,4 +11,16 @@ Uses CC:Tweaked modems to communicate to a primary manager for use in displaying
 
 Download and run `bootstrap.lua` to bootstrap a master server
 
-<!-- <https://cdn.jsdelivr.net/gh/Stinky-c/cc-networker@master/download.lua> -->
+## TODO
+
+- find release method
+    - tar ball and release all, use bootstraper to download and untar file
+    - <https://github.com/MCJack123/CC-Archive>
+- find out what module i changed to make things work
+- finish basalt types, create UI
+
+## How to create a devlopment environment
+
+TODO!
+
+<!-- <https://cdn.jsdelivr.net/gh/Stinky-c/cc-networker@master/bootstrap.lua> -->

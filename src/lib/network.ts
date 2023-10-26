@@ -1,4 +1,4 @@
-import { PeripheralFace, NetworkerRole } from "./misc";
+import { PeripheralFace, NetworkerRole } from "./types";
 import { NetworkerSettings } from "./settings";
 import * as netType from "./networkTypes";
 import * as event from "./event";
@@ -9,9 +9,9 @@ export class ModemManager {
   private broadcastChannel: number = 7701;
   private replyChannel: number = 7704;
   private role: NetworkerRole = NetworkerRole.slave;
-  private keepAlive: boolean;
-  private keepHandle: boolean;
-  private responseHandlers: netType.ResponseMapping;
+  private keepAlive: boolean = true;
+  private keepHandle: boolean = true;
+  private responseHandlers: netType.MessageMapping;
 
   /**
    *
@@ -23,8 +23,9 @@ export class ModemManager {
     broadcastChannel: number;
     replyChannel: number;
     face?: PeripheralFace;
-    responseHandlers: netType.ResponseMapping;
+    responseHandlers: netType.RequestMapping;
   }) {
+    // TODO: make it nicer i guess
     if (options.face !== undefined) {
       this.modem = peripheral.wrap(options.face) as ModemPeripheral;
     } else {
@@ -37,10 +38,6 @@ export class ModemManager {
     }
     this.modem.closeAll();
 
-    // this.broadcastChannel = options.broadcastChannel;
-    // this.replyChannel = options.replyChannel;
-    this.keepAlive = true;
-    this.keepHandle = true;
     this.responseHandlers = options.responseHandlers;
 
     this.modem.open(this.broadcastChannel); // open the broadcast channel
@@ -48,7 +45,7 @@ export class ModemManager {
 
     this.determineRole();
   }
-  public message(message: netType.CommonMessage) {
+  public message(message: netType.CommonMessageResponse) {
     this.modem.transmit(this.broadcastChannel, this.replyChannel, {
       message: message,
       replyChannel: this.replyChannel,
@@ -94,27 +91,31 @@ export class ModemManager {
   }
 
   // Loop functions
-  public heartbeat(): void {
+  public heartbeat(time: number = 15): void {
     while (this.keepAlive) {
+      print("Sending heartbeat...");
       this.message({
         type: "HeartBeatRequest",
         sender: os.computerID(),
       } as netType.HeartBeatRequest);
-      sleep(1);
+      sleep(time);
     }
   }
 
+  // Main handling
   public handleMessage(): void {
     while (this.keepHandle) {
       let messageEvent = event.pullEventAs(
         event.ModemMessageEvent,
         "modem_message"
       );
+
+      // TODO: use a basalt display to log messages
       term.clear();
       term.setCursorPos(1, 1);
       print("waiting for message: " + os.time());
-      pretty_print(messageEvent);
-      sleep(1);
+      // pretty_print(messageEvent);
+
       if (messageEvent !== null && messageEvent.message !== null) {
         let root = messageEvent.message as netType.FullModemMessage;
         // if this computer is meant to receive message
@@ -123,7 +124,7 @@ export class ModemManager {
 
         // handle message if we know what it is else ignore it
         if (handle !== undefined) {
-          handle(root.message, (message: netType.CommonMessage) => {
+          handle(root.message, (message: netType.CommonMessageRequest) => {
             this.message(message);
           });
         } else {

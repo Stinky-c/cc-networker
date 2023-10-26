@@ -1,7 +1,6 @@
-import { NetworkerRole } from "./misc";
-settings.load("/.settings");
+import { blindTrust_tableToMapping } from "./utils";
 
-enum NetworkerSettingsKeys {
+export enum SettingsKeys {
   downloadUrl = "networker-downloadurl",
   role = "networker-role",
   broadcastChannel = "networker-broadcastchannel",
@@ -10,97 +9,84 @@ enum NetworkerSettingsKeys {
   uid = "networker-uniqueidentifier",
 }
 
-let NetworkerSettingsDefintion: Array<{
-  name: string;
-  default: string | number;
-  description?: string;
-}> = [
-  { name: NetworkerSettingsKeys.downloadUrl, default: "..." }, // TODO: file hosting
-  {
-    name: NetworkerSettingsKeys.broadcastChannel,
-    default: 7701, // range 7701-7704
-    description: "The channel which messages are sent over",
-  },
-  {
-    name: NetworkerSettingsKeys.replyChannel,
-    default: 7705, // range 7705-7709
-    description: "The channel reply messages are sent over",
-  },
-];
+type NetworkerMappingType = Map<
+  string,
+  { value?: unknown; default: unknown; description: string }
+>;
+
+let NetworkerSettingsDefintion: NetworkerMappingType = new Map([
+  [
+    SettingsKeys.broadcastChannel,
+    { default: 7701, description: "The channel which messages are sent over" },
+  ],
+  [
+    SettingsKeys.replyChannel,
+    { default: 7705, description: "The channel reply messages are sent over" },
+  ],
+  [
+    SettingsKeys.role,
+    {
+      default: undefined,
+      description: "A saved copy of the current held role. currently unused",
+    },
+  ],
+  [
+    SettingsKeys.uid,
+    {
+      default: os.computerID(),
+      description:
+        "A special idenifier to be used when sending message over the network",
+    },
+  ],
+]);
 
 export class NetworkerSettings {
-  static Save() {
-    settings.save("/.settings");
+  private static under: NetworkerMappingType = NetworkerSettingsDefintion;
+
+  static Save(path: string = "/.networker") {
+    let handle = fs.open(path, "w");
+    if (handle[0] !== null) {
+      let data = textutils.serialise(this.under);
+      handle[0].write(data);
+      handle[0].close();
+    } else {
+      error(`error on loading settings: '${handle[1]}'`);
+    }
   }
 
-  static Load() {
-    settings.load("/.settings");
+  static Load(path: string = "/.networker") {
+    // does the file not exist?
+    if (!fs.exists(path)) {
+      print("file does not existing! Creating one now...");
+      this.Save(path);
+    }
+
+    let handle = fs.open(path, "r");
+    if (handle[0] !== null) {
+      let data = handle[0].readAll();
+      handle[0].close();
+
+      let table = textutils.unserialise(data) as LuaTable;
+      let newMapping = blindTrust_tableToMapping(
+        table,
+        Object.keys(this.under)
+      );
+      this.under = new Map([...this.under.entries(), ...newMapping.entries()]);
+    } else {
+      error(`error on loading settings: '${handle[1]}'`);
+    }
   }
 
-  static Define() {
-    let missing = this.Check();
-    NetworkerSettingsDefintion.forEach((value) => {
-      if (missing.includes(value.name)) {
-        settings.define(value.name, {
-          description: value.description,
-          default: value.default,
-        });
-        settings.set(value.name, value.default);
+  static Get(name: SettingsKeys): unknown {
+    if (Object.values(SettingsKeys).includes(name)) {
+      let value = this.under.get(name);
+
+      if (value === undefined) {
+        error("how did we get here?");
       }
-    });
-    settings.save("/.settings");
-  }
-
-  static Check() {
-    let validNames = Object.values(NetworkerSettingsKeys).filter((v) =>
-      isNaN(Number(v))
-    ) as string[];
-
-    let names = settings.getNames().filter((v) => {
-      return !(v.startsWith("networker-") && validNames.includes(v));
-    });
-    return names;
-  }
-
-  static get downloadurl(): string {
-    return settings.get(NetworkerSettingsKeys.downloadUrl);
-  }
-  static set downloadurl(value: string) {
-    settings.set(NetworkerSettingsKeys.downloadUrl, value);
-  }
-
-  static get role(): NetworkerRole {
-    return settings.get(NetworkerSettingsKeys.role);
-  }
-  static set role(value: NetworkerRole) {
-    settings.set(NetworkerSettingsKeys.role, value);
-  }
-
-  static get broadcastChannel(): number {
-    return settings.get(NetworkerSettingsKeys.broadcastChannel);
-  }
-  static set broadcastChannel(value: number) {
-    settings.set(NetworkerSettingsKeys.broadcastChannel, value);
-  }
-
-  static get secret(): string {
-    return settings.get(NetworkerSettingsKeys.secret);
-  }
-  static set secret(value: string) {
-    settings.set(NetworkerSettingsKeys.secret, value);
-  }
-
-  static get replyChannel(): number {
-    return settings.get(NetworkerSettingsKeys.replyChannel);
-  }
-  static set replyChannel(value: number) {
-    settings.set(NetworkerSettingsKeys.replyChannel, value);
-  }
-
-  static get uid(): string {
-    return settings.get(NetworkerSettingsKeys.uid);
-  }
-  static set uid(value: string) {
-    settings.set(NetworkerSettingsKeys.uid, value);
+      return value.value !== undefined ? value.value : value.default;
+    } else {
+      error(`${name} not in settings`);
+    }
   }
 }
