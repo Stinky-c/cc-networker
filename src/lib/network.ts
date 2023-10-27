@@ -1,8 +1,11 @@
 import { PeripheralFace, NetworkerRole } from "./types";
 import { NetworkerSettings } from "./settings";
-import * as netType from "./networkTypes";
+import * as netTypes from "./networkTypes";
 import * as event from "./event";
-import { pretty_print } from "cc.pretty";
+
+import { LoggingLevel } from "./types";
+
+type logFunc = (message: string, level: LoggingLevel) => void;
 
 export class ModemManager {
   private modem: ModemPeripheral;
@@ -11,7 +14,8 @@ export class ModemManager {
   private role: NetworkerRole = NetworkerRole.slave;
   private keepAlive: boolean = true;
   private keepHandle: boolean = true;
-  private responseHandlers: netType.MessageMapping;
+  private responseHandlers: netTypes.MessageMapping;
+  private logger: logFunc;
 
   /**
    *
@@ -23,7 +27,8 @@ export class ModemManager {
     broadcastChannel: number;
     replyChannel: number;
     face?: PeripheralFace;
-    responseHandlers: netType.RequestMapping;
+    responseHandlers: netTypes.RequestMapping;
+    loggingFunc: logFunc;
   }) {
     // TODO: make it nicer i guess
     if (options.face !== undefined) {
@@ -39,24 +44,25 @@ export class ModemManager {
     this.modem.closeAll();
 
     this.responseHandlers = options.responseHandlers;
+    this.logger = options.loggingFunc;
 
     this.modem.open(this.broadcastChannel); // open the broadcast channel
     this.modem.open(this.replyChannel); // open the reply channel
 
     this.determineRole();
   }
-  public message(message: netType.CommonMessageResponse) {
+  public message(message: netTypes.CommonMessageResponse) {
     this.modem.transmit(this.broadcastChannel, this.replyChannel, {
       message: message,
       replyChannel: this.replyChannel,
-    } as netType.FullModemMessage);
+    } as netTypes.FullModemMessage);
   }
 
   public determineRole(): NetworkerRole {
     this.message({
       sender: os.computerID(),
       type: "RoleAcquisitionRequest",
-    } as netType.RoleAcquisitionRequest);
+    } as netTypes.RoleAcquisitionRequest);
 
     let response = false;
 
@@ -67,8 +73,8 @@ export class ModemManager {
           "modem_message"
         );
         if (messageEvent !== null && messageEvent.message !== null) {
-          let root = messageEvent.message as netType.FullModemMessage;
-          print(root.message.type);
+          let root = messageEvent.message as netTypes.FullModemMessage;
+          this.logger(root.message.type, LoggingLevel.debug);
           if (root.message.type === "RoleAcquisitionResponse") {
             response = true;
           }
@@ -81,10 +87,16 @@ export class ModemManager {
     parallel.waitForAny(timeout1, timeout2);
 
     if (response) {
-      print("Response detected... setting role to slave");
+      this.logger(
+        "Response detected... setting role to slave",
+        LoggingLevel.info
+      );
       this.role = NetworkerRole.slave;
     } else {
-      print("No Response deteced... Assuming role of master");
+      this.logger(
+        "No Response deteced... Assuming role of master",
+        LoggingLevel.info
+      );
       this.role = NetworkerRole.master;
     }
     return this.role;
@@ -93,11 +105,11 @@ export class ModemManager {
   // Loop functions
   public heartbeat(time: number = 15): void {
     while (this.keepAlive) {
-      print("Sending heartbeat...");
+      this.logger("Sending heartbeat...", LoggingLevel.debug);
       this.message({
         type: "HeartBeatRequest",
         sender: os.computerID(),
-      } as netType.HeartBeatRequest);
+      } as netTypes.HeartBeatRequest);
       sleep(time);
     }
   }
@@ -110,21 +122,15 @@ export class ModemManager {
         "modem_message"
       );
 
-      // TODO: use a basalt display to log messages
-      term.clear();
-      term.setCursorPos(1, 1);
-      print("waiting for message: " + os.time());
-      // pretty_print(messageEvent);
-
       if (messageEvent !== null && messageEvent.message !== null) {
-        let root = messageEvent.message as netType.FullModemMessage;
+        let root = messageEvent.message as netTypes.FullModemMessage;
         // if this computer is meant to receive message
         let messageType = root.message.type;
         let handle = this.responseHandlers.get(messageType);
 
         // handle message if we know what it is else ignore it
         if (handle !== undefined) {
-          handle(root.message, (message: netType.CommonMessageRequest) => {
+          handle(root.message, (message: netTypes.CommonMessageRequest) => {
             this.message(message);
           });
         } else {

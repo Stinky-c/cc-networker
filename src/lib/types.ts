@@ -16,3 +16,10 @@ export enum NetworkerRole {
 export interface AppState {
   lastHeartbeatResponse: number;
 }
+
+export enum LoggingLevel {
+  debug = "DEBUG",
+  info = "INFO",
+  warning = "WARN",
+  error = "ERR",
+}

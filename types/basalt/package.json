@@ -5,7 +5,8 @@
     "types": "index.d.ts",
     "files": [
         "./*.d.ts",
-        "./container/*.d.ts"
+        "./container/*.d.ts",
+        "./objects/*.d.ts"
     ],
     "author": "buckydev",
     "license": "MIT",

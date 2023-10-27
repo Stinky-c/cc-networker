@@ -1,9 +1,7 @@
-import { Container, ThisContainer } from "./container";
 import { BasaltVisualObject } from "../object";
+import { Container, ThisContainer } from "./container";
 
-import * as objects from "../objects/index";
-
-export class Frame extends BasaltVisualObject implements Container {
+export class BaseFrame extends BasaltVisualObject implements Container {
   //#region container impl
   addChild(object: ThisContainer): ThisContainer;
   getChild(id: string): ThisContainer | null;
@@ -16,8 +14,6 @@ export class Frame extends BasaltVisualObject implements Container {
   clearFocusedChild(): ThisContainer;
   //#endregion
 
-  //#region object impls
-  addButton(): objects.Button;
-  addThread(): objects.Thread;
-  addTextfield(): objects.TextField;
+  getOffset(): LuaMultiReturn<[number, number]>;
+  setOffset(x: number, y: number): LuaMultiReturn<[number, number]>;
 }

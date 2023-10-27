@@ -11,21 +11,39 @@
             "@typescript-to-lua/language-extensions",
             "@jackmacwindows/lua-types/cc",
             "@jackmacwindows/craftos-types",
-            "@jackmacwindows/cc-types"
+            "@jackmacwindows/cc-types",
         ],
         "outDir": "dist/",
         "sourceMap": false,
         "sourceRoot": "src/",
-        "inlineSourceMap": true
+        "inlineSourceMap": true,
+        "baseUrl": "./",
+        "paths": {
+            "bf-lib.basalt": [
+                "./types/basalt/basalt.d.ts",
+            ],
+            "bf-types.basalt": [
+                "./types/basalt/index.d.ts",
+            ]
+        },
+        "plugins": [
+            {
+                "transform": "./scripts/transformImport.ts"
+            }
+        ]
     },
     "tstl": {
         "luaTarget": "CC",
         "luaLibImport": "require",
         "sourceMapTraceback": true,
-        "noImplicitSelf": false
+        "noImplicitSelf": false,
+        "noResolvePaths": [
+            "lib.basalt"
+        ]
     },
     "include": [
         "src/*.ts",
-        "src/lib/*.ts"
+        "src/lib/*.ts",
+        ".ignored/basalt/*.lua"
     ]
 }

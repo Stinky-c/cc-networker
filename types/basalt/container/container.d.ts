@@ -1,4 +1,4 @@
-type ThisContainer = ThisType<Container>;
+type ThisContainer = Container;
 
 export class Container {
   addChild(object: ThisContainer): ThisContainer; /// Returns object that was added
@@ -12,7 +12,6 @@ export class Container {
 
   setFocusedObject(obj: ThisContainer, zIndex: number): ThisContainer;
   setImportant(id: string): ThisContainer;
-  // sortElementOrder(): void;
 
   clearFocusedChild(): ThisContainer;
   setFocusedObject(obj: any): ThisContainer;

@@ -1,8 +1,8 @@
-import * as BasaltObjects from "./objects";
+type ThisBasaltObject = BasaltObject;
 
-type ThisBasaltObject = ThisType<BasaltObject>;
-
-type ObjectType = unknown; // TODO: better defintion
+// TODO: better defintion
+type ObjectType = unknown;
+type Button = unknown;
 
 export class BasaltObject {
   // Object management
@@ -20,9 +20,10 @@ export class BasaltObject {
   // TODO: specify retuned events
   onClick(
     func: (
-      self: ThisBasaltObject,
+      this: void,
+      self: BasaltVisualObject,
       event: string,
-      button: BasaltObjects.Button,
+      button: Button,
       x: number,
       y: number
     ) => void
@@ -30,9 +31,10 @@ export class BasaltObject {
 
   onClickUp(
     func: (
-      self: ThisBasaltObject,
+      this: void,
+      self: BasaltVisualObject,
       event: string,
-      button: BasaltObjects.Button,
+      button: Button,
       x: number,
       y: number
     ) => void
@@ -40,9 +42,10 @@ export class BasaltObject {
 
   onRelease(
     func: (
-      self: ThisBasaltObject,
+      this: void,
+      self: BasaltVisualObject,
       event: string,
-      button: BasaltObjects.Button,
+      button: Button,
       x: number,
       y: number
     ) => void
@@ -50,7 +53,8 @@ export class BasaltObject {
 
   onScroll(
     func: (
-      self: ThisBasaltObject,
+      this: void,
+      self: BasaltVisualObject,
       event: string,
       direction: any,
       x: number,
@@ -60,7 +64,8 @@ export class BasaltObject {
 
   onDrag(
     func: (
-      self: ThisBasaltObject,
+      this: void,
+      self: BasaltVisualObject,
       event: string,
       x: number,
       y: number,
@@ -70,30 +75,54 @@ export class BasaltObject {
   ): ThisBasaltObject;
 
   onKey(
-    func: (self: ThisBasaltObject, event: string, key: Key) => void
+    func: (
+      this: void,
+      self: BasaltVisualObject,
+      event: string,
+      key: Key
+    ) => void
   ): ThisBasaltObject;
 
   onChar(
-    func: (self: ThisBasaltObject, event: string, char: Key) => void
+    func: (
+      this: void,
+      self: BasaltVisualObject,
+      event: string,
+      char: Key
+    ) => void
   ): ThisBasaltObject;
 
   onKeyUp(
-    func: (self: ThisBasaltObject, event: string, key: Key) => void
+    func: (
+      this: void,
+      self: BasaltVisualObject,
+      event: string,
+      key: Key
+    ) => void
   ): ThisBasaltObject;
 
-  onGetFocus(func: (self: ThisBasaltObject) => void): ThisBasaltObject;
-  onLoseFocus(func: (self: ThisBasaltObject) => void): ThisBasaltObject;
+  onGetFocus(
+    func: (this: void, self: ThisBasaltObject) => void
+  ): ThisBasaltObject;
+  onLoseFocus(
+    func: (this: void, self: ThisBasaltObject) => void
+  ): ThisBasaltObject;
 
   onEvent(
-    func: (self: ThisBasaltObject, event: string, ...args: any[]) => void
+    func: (
+      this: void,
+      self: BasaltVisualObject,
+      event: string,
+      ...args: any[]
+    ) => void
   ): ThisBasaltObject;
 }
 
-type ThisBasaltVisualObject = ThisType<BasaltVisualObject>;
+
 export class BasaltVisualObject extends BasaltObject {
   // Visiblity
-  show(): ThisBasaltVisualObject;
-  hide(): ThisBasaltVisualObject;
+  show(): BasaltVisualObject;
+  hide(): BasaltVisualObject;
   setVisable(state?: boolean): boolean;
   isVisible(): boolean;
 
@@ -102,13 +131,16 @@ export class BasaltVisualObject extends BasaltObject {
     x: number | string,
     y: number | string,
     add?: boolean
-  ): ThisBasaltVisualObject;
+  ): BasaltVisualObject;
   getPosition(): LuaMultiReturn<[number, number]>;
   getX(): number;
   getY(): number;
 
   // Size
-  setSize(): ThisBasaltVisualObject;
+  setSize(
+    width: number | string,
+    height: number | string
+  ): BasaltVisualObject;
   getSize(): LuaMultiReturn<[number, number]>;
   getWidth(): number;
   getHeight(): number;
@@ -118,18 +150,18 @@ export class BasaltVisualObject extends BasaltObject {
     bgColor: number | Color | false,
     char?: string,
     bgSymbolColor?: number | Color
-  ): ThisBasaltVisualObject;
+  ): BasaltVisualObject;
   getBackground(): number | false;
 
   // foreground
-  setForeground(fg: number | Color): ThisBasaltVisualObject;
+  setForeground(fg: number | Color): BasaltVisualObject;
   getForeground(): number | Color;
 
   // transparency
-  setTransparency(state: boolean): ThisBasaltVisualObject;
+  setTransparency(state: boolean): BasaltVisualObject;
 
   // z-index
-  setZIndex(zIndex: number): ThisBasaltVisualObject;
+  setZIndex(zIndex: number): BasaltVisualObject;
 
   //
   getAbsolutePosition(
@@ -137,14 +169,14 @@ export class BasaltVisualObject extends BasaltObject {
     y: number | null
   ): LuaMultiReturn<[number, number]>;
 
-  ignoreOffset(ignore: boolean): ThisBasaltVisualObject;
+  ignoreOffset(ignore: boolean): BasaltVisualObject;
 
   isFocused(): boolean;
 
-  setShadow(color: number | Color | false): ThisBasaltVisualObject;
+  setShadow(color: number | Color | false): BasaltVisualObject;
   getShadow(): number | false;
 
-  setBorder(color: number | Color, sides?: string);
+  setBorder(color: number | Color, sides?: string): BasaltVisualObject;
   // Animation
   animatePosition(
     x: number,
@@ -153,7 +185,7 @@ export class BasaltVisualObject extends BasaltObject {
     timeOffset?: number,
     mode?: string,
     callback?: () => void
-  ): ThisBasaltVisualObject;
+  ): BasaltVisualObject;
   animateSize(
     width: number,
     height: number,
@@ -161,7 +193,7 @@ export class BasaltVisualObject extends BasaltObject {
     timeOffset?: number,
     mode?: string,
     callback?: () => void
-  ): ThisBasaltVisualObject;
+  ): BasaltVisualObject;
 
   animateOffset(
     xOffset: number,
@@ -170,9 +202,74 @@ export class BasaltVisualObject extends BasaltObject {
     timeOffset?: number,
     mode?: string,
     callback?: () => void
-  ): ThisBasaltVisualObject;
+  ): BasaltVisualObject;
   // Textures
-  addTexture(fp: string, animation?: boolean): ThisBasaltVisualObject;
-  setTextureMode(mode: "default" | "center" | "right"): ThisBasaltVisualObject;
-  setInfinitePlay(loop: boolean): ThisBasaltVisualObject;
+  addTexture(fp: string, animation?: boolean): BasaltVisualObject;
+  setTextureMode(mode: "default" | "center" | "right"): BasaltVisualObject;
+  setInfinitePlay(loop: boolean): BasaltVisualObject;
+
+  // Drawing
+
+  addDraw(
+    id: string,
+    func: (this: void) => void,
+    positon?: number,
+    queue?: 1 | 2 | 3,
+    drawImmediately?: boolean
+  ): BasaltVisualObject;
+  addPreDraw(
+    id: string,
+    func: (this: void) => void,
+    positon?: number,
+    drawImmediately?: boolean
+  ): BasaltVisualObject;
+  addPostDraw(
+    id: string,
+    func: (this: void) => void,
+    positon?: number,
+    drawImmediately?: boolean
+  ): BasaltVisualObject;
+
+  setDrawState(id: string, state: boolean): BasaltVisualObject;
+  getDrawId(id: string): number;
+
+  addText(x: number, y: number, text: string): BasaltVisualObject;
+  addBG(x: number, y: number, color: string): BasaltVisualObject;
+  addFG(x: number, y: number, color: string): BasaltVisualObject;
+  addBlit(
+    x: number,
+    y: number,
+    cfColor: string,
+    bgColor: string
+  ): BasaltVisualObject;
+
+  addBlit(
+    x: number,
+    y: number,
+    width: string,
+    height: string,
+    text: string
+  ): BasaltVisualObject;
+
+  addBackgroundBox(
+    x: number,
+    y: number,
+    width: string,
+    height: string,
+    color: number | Color
+  ): BasaltVisualObject;
+  addForegroundBox(
+    x: number,
+    y: number,
+    width: string,
+    height: string,
+    color: number | Color
+  ): BasaltVisualObject;
+  // Events
+  onResize(
+    func: (this: void, self: BasaltVisualObject) => void
+  ): BasaltVisualObject;
+  onReposition(
+    func: (this: void, self: BasaltVisualObject) => void
+  ): BasaltVisualObject;
 }
