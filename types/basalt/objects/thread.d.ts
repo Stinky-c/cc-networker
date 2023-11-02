@@ -1,6 +1,5 @@
-type ThisThread = Thread;
 export class Thread {
-  start(func: Function): ThisThread;
-  stop(): ThisThread;
+  start(func: Function): this;
+  stop(): this;
   getStatus(): "running" | "normal" | "suspended" | "dead";
 }

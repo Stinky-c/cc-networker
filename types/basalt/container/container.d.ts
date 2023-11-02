@@ -1,18 +1,16 @@
-type ThisContainer = Container;
-
 export class Container {
-  addChild(object: ThisContainer): ThisContainer; /// Returns object that was added
-  getChild(id: string): ThisContainer | null;
+  addChild(object: this): this; /// Returns object that was added
+  getChild(id: string): this | null;
 
-  getDeepChild(id: string): ThisContainer | null;
+  getDeepChild(id: string): this | null;
 
   removeChild(id: string): boolean;
 
-  removeChildren(): ThisContainer;
+  removeChildren(): this;
 
-  setFocusedObject(obj: ThisContainer, zIndex: number): ThisContainer;
-  setImportant(id: string): ThisContainer;
+  setFocusedObject(obj: this, zIndex: number): this;
+  setImportant(id: string): this;
 
-  clearFocusedChild(): ThisContainer;
-  setFocusedObject(obj: any): ThisContainer;
+  clearFocusedChild(): this;
+  setFocusedObject(obj: any): this;
 }

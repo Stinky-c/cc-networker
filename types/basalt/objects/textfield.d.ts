@@ -1,33 +1,32 @@
 import { BasaltVisualObject } from "../object";
 
-type ThisTextField = TextField;
 // TODO: finish adding methods
 export class TextField extends BasaltVisualObject {
   //   getLines(): LuaTable<number, string>;
   getLines(): Array<string>;
   getLine(index: number): string;
-  editLine(index: number, text: string): ThisTextField;
-  addLine(text: string, index?: number): ThisTextField;
-  removeLine(index: string): ThisTextField;
+  editLine(index: number, text: string): this;
+  addLine(text: string, index?: number): this;
+  removeLine(index: string): this;
   getTextCursor(): LuaMultiReturn<[number, number]>;
-  addKeywords(color: number | Color, keywords: Array<string>): ThisTextField;
+  addKeywords(color: number | Color, keywords: Array<string>): this;
 
   // lua pattern rules
   addRule(
     pattern: string,
     textColor: number | Color,
     backgroundColor: number | Color
-  ): ThisTextField;
+  ): this;
   editRule(
     pattern: string,
     textColor: number | Color,
     backgroundColor: number | Color
-  ): ThisTextField;
+  ): this;
   removeRule(
     pattern: string,
     textColor: number | Color,
     backgroundColor: number | Color
-  ): ThisTextField;
+  ): this;
 
-  clear(): ThisTextField;
+  clear(): this;
 }

@@ -11,12 +11,62 @@ import * as netTypes from "./lib/networkTypes";
 
 // init settings and frame
 NetworkerSettings.Load();
+// basalt.setTheme({ MenubarBG: colors.green, MenubarText: colors.white });
 let mainFrame = basalt.createFrame();
-let tmp = term.getSize(); // wait for string interp from basalt?
-let loggingField = mainFrame
+
+let loggingFrame = mainFrame
+  .addFrame()
+  .setPosition(1, 2)
+  .setSize("{parent.w}", "{parent.h - 1}");
+
+let testFrame = mainFrame
+  .addFrame()
+  .setPosition(1, 2)
+  .setSize("{parent.w}", "{parent.h - 1}");
+
+//#region Begin menubar setup
+
+let subFrames: basaltTypes.baseObjects.BasaltVisualObject[] = [
+  loggingFrame,
+  testFrame,
+];
+let subFramesNames: string[] = ["Debug Menu", "Test Menu"];
+
+function openSubFrame(index: number | null) {
+  if (index !== null) {
+    for (let i of subFrames) {
+      i.hide();
+    }
+    subFrames[index].show();
+  }
+}
+let menubar = mainFrame
+  .addMenubar()
+  .setScrollable(true)
+  .setSize("{parent.w}")
+  .onChange((self, value) => openSubFrame(self.getItemIndex()));
+
+for (let i of subFramesNames) {
+  menubar.addItem(i);
+}
+//#endregion
+
+let loggingField = loggingFrame
   .addTextfield()
-  .setSize(tmp[0], tmp[1]) as basaltTypes.objects.TextField;
-// TODO: add keywords to color
+  .setPosition(1, 2)
+  .setSize("{parent.w}", "{parent.h-1}")
+  .onKey(() => false)
+  .onKeyUp(() => false)
+  .addKeywords(colors.red, [LoggingLevel.warning, LoggingLevel.error])
+  .addKeywords(colors.green, [LoggingLevel.info])
+  .addKeywords(colors.blue, [LoggingLevel.debug]);
+
+let testing = testFrame
+  .addButton()
+  .setPosition(3, 3)
+  .setSize(7, 3)
+  .setText("Click!")
+  .onClick((self) => self.hide());
 
 let log = (message: string, level: LoggingLevel) => {
   loggingField.addLine(`[${level}]: ${message}`);
@@ -27,6 +77,7 @@ let state: AppState = { lastHeartbeatResponse: 0 };
 let UID = NetworkerSettings.Get(SettingsKeys.uid);
 
 // TODO: spilt to seperate file?
+//#region Request & Response mapping
 let requestMapping: netTypes.RequestMapping = new Map([
   [
     "HeartBeatRequest",
@@ -68,6 +119,7 @@ let responseMapping: netTypes.ResponseMapping = new Map([
     },
   ],
 ]);
+//#endregion
 
 const modem = new ModemManager({
   broadcastChannel: NetworkerSettings.Get(
@@ -91,11 +143,6 @@ let threadHeartbeat = mainFrame.addThread().start(() => {
 let threadHandleMessage = mainFrame.addThread().start(() => {
   modem.handleMessage();
 });
-
-// let button1 = mainFrame.addButton().setText("Hello world!");
-// button1.onClick((self, _1, _2, x, y) => {
-//   self.hide();
-// });
 
 // glory to the start!
 basalt.autoUpdate();

@@ -1,23 +1,26 @@
-import { Container, ThisContainer } from "./container";
+import { Container } from "./container";
 import { BasaltVisualObject } from "../object";
 
 import * as objects from "../objects/index";
 
 export class Frame extends BasaltVisualObject implements Container {
   //#region container impl
-  addChild(object: ThisContainer): ThisContainer;
-  getChild(id: string): ThisContainer | null;
-  getDeepChild(id: string): ThisContainer | null;
+  addChild(object: this): this;
+  getChild(id: string): this | null;
+  getDeepChild(id: string): this | null;
   removeChild(id: string): boolean;
-  removeChildren(): ThisContainer;
-  setFocusedObject(obj: ThisContainer, zIndex: number): ThisContainer;
-  setFocusedObject(obj: any): ThisContainer;
-  setImportant(id: string): ThisContainer;
-  clearFocusedChild(): ThisContainer;
+  removeChildren(): this;
+  setFocusedObject(obj: this, zIndex: number): this;
+  setFocusedObject(obj: any): this;
+  setImportant(id: string): this;
+  clearFocusedChild(): this;
   //#endregion
 
   //#region object impls
+  addFrame(): Frame;
   addButton(): objects.Button;
   addThread(): objects.Thread;
   addTextfield(): objects.TextField;
+  addList(): objects.List;
+  addMenubar(): objects.Menubar;
 }
