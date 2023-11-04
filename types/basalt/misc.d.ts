@@ -1,4 +1,4 @@
-export type Variable = Function;
+export type Variable = Function; // TODO better typing
 
 export interface Theme {
   BaseFrameBG?: Color;

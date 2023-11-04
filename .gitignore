@@ -5,3 +5,4 @@ event/
 dist/
 .ignored/
 !bootstrap.lua
+!devbootstrap.lua

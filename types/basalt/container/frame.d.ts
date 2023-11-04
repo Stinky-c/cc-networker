@@ -2,8 +2,9 @@ import { Container } from "./container";
 import { BasaltVisualObject } from "../object";
 
 import * as objects from "../objects/index";
+import { Theme } from "../misc";
 
-export class Frame extends BasaltVisualObject implements Container {
+export class Frame extends BasaltVisualObject {
   //#region container impl
   addChild(object: this): this;
   getChild(id: string): this | null;
@@ -14,6 +15,8 @@ export class Frame extends BasaltVisualObject implements Container {
   setFocusedObject(obj: any): this;
   setImportant(id: string): this;
   clearFocusedChild(): this;
+  setTheme(_theme: string | Theme, col?: number | undefined): this;
+  getTheme(name: string): unknown;
   //#endregion
 
   //#region object impls

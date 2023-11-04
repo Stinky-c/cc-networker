@@ -15,17 +15,17 @@ export class TextField extends BasaltVisualObject {
   addRule(
     pattern: string,
     textColor: number | Color,
-    backgroundColor: number | Color
+    backgroundColor?: number | Color
   ): this;
   editRule(
     pattern: string,
     textColor: number | Color,
-    backgroundColor: number | Color
+    backgroundColor?: number | Color
   ): this;
   removeRule(
     pattern: string,
     textColor: number | Color,
-    backgroundColor: number | Color
+    backgroundColor?: number | Color
   ): this;
 
   clear(): this;

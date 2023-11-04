@@ -1,5 +1,5 @@
 import { PeripheralFace, NetworkerRole } from "./types";
-import { NetworkerSettings } from "./settings";
+import { NetworkerSettings, SettingsKeys } from "./settings";
 import * as netTypes from "./networkTypes";
 import * as event from "./event";
 
@@ -59,6 +59,14 @@ export class ModemManager {
   }
 
   public determineRole(): NetworkerRole {
+    // TODO: clean logic flow
+    let tmpRole = NetworkerSettings.Get(SettingsKeys.role) as
+      | NetworkerRole
+      | undefined;
+    if (tmpRole !== undefined) {
+      this.role = tmpRole;
+      return tmpRole;
+    }
     this.message({
       sender: os.computerID(),
       type: "RoleAcquisitionRequest",
@@ -99,6 +107,7 @@ export class ModemManager {
       );
       this.role = NetworkerRole.master;
     }
+    NetworkerSettings.Set(SettingsKeys.role, this.role);
     return this.role;
   }
 
@@ -134,12 +143,13 @@ export class ModemManager {
             this.message(message);
           });
         } else {
-          error(
-            `Unknown handler for message type '${messageType}' ignoring...`
+          this.logger(
+            `Unknown handler for message type '${messageType}' ignoring...`,
+            LoggingLevel.warning
           );
         }
       } else {
-        error("message was null");
+        this.logger("message was null", LoggingLevel.error);
       }
     }
   }

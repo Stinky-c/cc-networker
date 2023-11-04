@@ -16,7 +16,7 @@ Download and run `bootstrap.lua` to bootstrap a master server
 - find release method
     - tar ball and release all, use bootstraper to download and untar file
     - <https://github.com/MCJack123/CC-Archive>
-- find out what module i changed to make things work
+- document basalt **ALL** basalt types
 - finish basalt types, create UI
 
 ## How to create a devlopment environment
