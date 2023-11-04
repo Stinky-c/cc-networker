@@ -10,20 +10,18 @@
     "serve": "cd dist/ && python -m http.server 9001"
   },
   "devDependencies": {
-    "@jackmacwindows/cc-types": "^1.0.0",
-    "@jackmacwindows/craftos-types": "^1.1.1",
+    "@jackmacwindows/cc-types": "file:types/cc",
+    "@jackmacwindows/craftos-types": "file:types/craftos",
     "@jackmacwindows/lua-types": "^2.13.1",
-    "@typescript-eslint/eslint-plugin": "^6.8.0",
+    "@jackmacwindows/typescript-to-lua": "github:Stinky-c/TypeScriptToLua",
+    "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.8.0",
     "@typescript-to-lua/language-extensions": "^1.19.0",
-    "eslint": "^8.51.0",
+    "eslint": "^8.53.0",
     "prettier": "3.0.3",
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
   "author": "JackMacWindows",
-  "license": "MIT",
-  "dependencies": {
-    "@jackmacwindows/typescript-to-lua": "^1.16.1"
-  }
+  "license": "MIT"
 }

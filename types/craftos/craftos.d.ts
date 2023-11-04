@@ -7,22 +7,22 @@ type Colour = Color;
 
 /** @noSelf **/
 declare namespace colors {
-    var white: Color;
-    var orange: Color;
-    var magenta: Color;
-    var lightBlue: Color;
-    var yellow: Color;
-    var lime: Color;
-    var pink: Color;
-    var gray: Color;
-    var lightGray: Color;
-    var cyan: Color;
-    var purple: Color;
-    var blue: Color;
-    var brown: Color;
-    var green: Color;
-    var red: Color;
-    var black: Color;
+    let white: Color;
+    let orange: Color;
+    let magenta: Color;
+    let lightBlue: Color;
+    let yellow: Color;
+    let lime: Color;
+    let pink: Color;
+    let gray: Color;
+    let lightGray: Color;
+    let cyan: Color;
+    let purple: Color;
+    let blue: Color;
+    let brown: Color;
+    let green: Color;
+    let red: Color;
+    let black: Color;
     function combine(c1: Color, ...c2: Color[]): Color;
     function subtract(c1: Color, ...c2: Color[]): Color;
     function test(colors: Color, color: Color): boolean;
@@ -33,22 +33,22 @@ declare namespace colors {
 
 /** @noSelf **/
 declare namespace colours {
-    var white: Colour;
-    var orange: Colour;
-    var magenta: Colour;
-    var lightBlue: Colour;
-    var yellow: Colour;
-    var lime: Colour;
-    var pink: Colour;
-    var grey: Colour;
-    var lightGrey: Colour;
-    var cyan: Colour;
-    var purple: Colour;
-    var blue: Colour;
-    var brown: Colour;
-    var green: Colour;
-    var red: Colour;
-    var black: Colour;
+    let white: Colour;
+    let orange: Colour;
+    let magenta: Colour;
+    let lightBlue: Colour;
+    let yellow: Colour;
+    let lime: Colour;
+    let pink: Colour;
+    let grey: Colour;
+    let lightGrey: Colour;
+    let cyan: Colour;
+    let purple: Colour;
+    let blue: Colour;
+    let brown: Colour;
+    let green: Colour;
+    let red: Colour;
+    let black: Colour;
     function combine(c1: Colour, ...c2: Colour[]): Colour;
     function subtract(c1: Colour, ...c2: Colour[]): Colour;
     function test(colors: Colour, color: Colour): boolean;
@@ -58,12 +58,12 @@ declare namespace colours {
 }
 /** @noSelf **/
 declare namespace commands {
-  function exec(command: string): LuaMultiReturn<[boolean, LuaTable | Object]>;
+  function exec(command: string): LuaMultiReturn<[boolean, LuaTable | object]>;
   function execAsync(command: string): number;
-  function list(command: string): LuaTable | Object;
+  function list(command: string): LuaTable | object;
   function getBlockPosition(): LuaMultiReturn<[number, number, number]>;
-  function getBlockInfo(x: number, y: number, z: number): LuaTable | Object;
-  function getBlockInfos(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number): LuaTable | Object;
+  function getBlockInfo(x: number, y: number, z: number): LuaTable | object;
+  function getBlockInfos(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number): LuaTable | object;
 }
 /** @noSelf **/
 declare namespace disk {
@@ -127,12 +127,12 @@ declare function write(str: string): number;
 declare function print(...str: any[]): number;
 declare function printError(...str: any[]): void;
 declare function read(replaceChar?: string, history?: string[], completeFn?: (partial: string) => string[], defaultValue?: string): string;
-declare var _CC_DEFAULT_SETTINGS: string;
-declare var _CC_DISABLE_LUA51_FEATURES: boolean;
-declare var _HOST: string;
+declare let _CC_DEFAULT_SETTINGS: string;
+declare let _CC_DISABLE_LUA51_FEATURES: boolean;
+declare let _HOST: string;
 /** @noSelf **/
 declare namespace gps {
-    var CHANNEL_GPS: number;
+    let CHANNEL_GPS: number;
     function locate(timeout?: number, debug?: boolean): LuaMultiReturn<[number, number, number]>;
 }
 /** @noSelf **/
@@ -534,8 +534,8 @@ declare namespace pocket {
 }
 /** @noSelf **/
 declare namespace rednet {
-    var CHANNEL_BROADCAST: number;
-    var CHANNEL_REPEAT: number;
+    let CHANNEL_BROADCAST: number;
+    let CHANNEL_REPEAT: number;
     function open(modem: string): void;
     function close(modem?: string): void;
     function isOpen(modem?: string): void;
@@ -602,8 +602,8 @@ declare namespace shell {
     function switchTab(id: number): void;
     function complete(prefix: string): string[];
     function completeProgram(prefix: string): string[];
-    function setCompletionFunction(path: string, completion: (shell: LuaTable|Object, index: number, partial: string, previous: string[]) => string[]): void;
-    function getCompletionInfo(): {fnComplete: (shell: LuaTable|Object, index: number, partial: string, previous: string[]) => string[]}[];
+    function setCompletionFunction(path: string, completion: (shell: LuaTable|object, index: number, partial: string, previous: string[]) => string[]): void;
+    function getCompletionInfo(): {fnComplete: (shell: LuaTable|object, index: number, partial: string, previous: string[]) => string[]}[];
 }
 /** @noSelf */
 interface ITerminal {
@@ -696,14 +696,14 @@ type SerializeOptions = {
 }
 /** @noSelf **/
 declare namespace textutils {
-    var empty_json_array: Object;
-    var json_null: Object;
+    let empty_json_array: object;
+    let json_null: object;
     function slowWrite(text: string, rate?: number): void;
     function slowPrint(text: string, rate?: number): void;
     function formatTime(time: number, hour24?: boolean): string;
     function pagedPrint(text: string, freeLines?: number): number;
-    function tabulate(...args: (LuaTable | Object | Color)[]): void;
-    function pagedTabulate(...args: (LuaTable | Object | Color)[]): void;
+    function tabulate(...args: (LuaTable | object | Color)[]): void;
+    function pagedTabulate(...args: (LuaTable | object | Color)[]): void;
     function serialize(tab: any, options?: SerializeOptions): string;
     function serialise(tab: any, options?: SerializeOptions): string;
     function serializeJSON(tab: any, nbtStyle?: boolean): string;
@@ -731,7 +731,7 @@ declare namespace turtle {
 
   function getItemSpace(slotNum?: number): number;
 
-  function getItemDetail(slotNum?: number): LuaTable | Object;
+  function getItemDetail(slotNum?: number): LuaTable | object;
 
   function equipLeft(): boolean;
   function equipRight(): boolean;
@@ -752,9 +752,9 @@ declare namespace turtle {
   function detectUp(toolSide?: string): boolean;
   function detectDown(toolSide?: string): boolean;
 
-  function inspect(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | Object | string]>;
-  function inspectUp(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | Object | string]>;
-  function inspectDown(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | Object | string]>;
+  function inspect(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | object | string]>;
+  function inspectUp(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | object | string]>;
+  function inspectDown(toolSide?: string): LuaMultiReturn<[boolean, LuaTable | object | string]>;
 
   function compare(toolSide?: string): boolean;
   function compareUp(toolSide?: string): boolean;

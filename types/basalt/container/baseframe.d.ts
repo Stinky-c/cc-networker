@@ -1,8 +1,11 @@
+import { Theme } from "../misc";
 import { BasaltVisualObject } from "../object";
 import { Container } from "./container";
 
 export class BaseFrame extends BasaltVisualObject implements Container {
   //#region container impl
+  setTheme(_theme: string | Theme, col?: number | undefined): this;
+  getTheme(name: string): unknown;
   addChild(object: this): this;
   getChild(id: string): this | null;
   getDeepChild(id: string): this | null;

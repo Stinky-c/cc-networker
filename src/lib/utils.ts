@@ -13,7 +13,7 @@ export function blindTrust_tableToMapping(
 ) {
   let tempMap = new Map();
   for (let i of mapKeys) {
-    if (table.has(i)) {
+    if (table.has(i) === true) {
       tempMap.set(i, table.get(i));
     }
   }

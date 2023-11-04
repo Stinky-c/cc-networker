@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/triple-slash-reference */
 /// <reference path="audio/dfpwm.d.ts"/>
 /// <reference path="completion.d.ts"/>
 /// <reference path="expect.d.ts"/>

@@ -1,5 +1,5 @@
 export class Thread {
-  start(func: Function): this;
+  start(func: () => any): this;
   stop(): this;
   getStatus(): "running" | "normal" | "suspended" | "dead";
 }

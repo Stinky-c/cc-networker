@@ -1,7 +1,7 @@
 /** @noSelfInFile **/
 /** @noResolution **/
 declare module "cc.pretty" {
-    type Doc = {};
+    type Doc = object;
     export const empty: Doc;
     export const space: Doc;
     export const line: Doc;

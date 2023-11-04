@@ -44,7 +44,5 @@
     "include": [
         "src/*.ts",
         "src/lib/*.ts",
-        ".ignored/basalt/*.lua",
-        ".eslintrc.cjs"
     ]
 }

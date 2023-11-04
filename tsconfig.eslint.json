@@ -1,0 +1,11 @@
+{
+    "include": [
+        ".eslintrc.cjs",
+        "scripts/**/*.ts",
+        "src/**/*.ts",
+        "types/**/*.ts"
+    ],
+    "compilerOptions": {
+        "strictNullChecks": true
+    }
+}
