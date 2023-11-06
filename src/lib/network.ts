@@ -1,11 +1,10 @@
 import { PeripheralFace, NetworkerRole } from "./types";
 import { NetworkerSettings, SettingsKeys } from "./settings";
-import * as netTypes from "./networkTypes";
+import { Logger } from "./utils";
 import * as event from "./event";
 
-import { LoggingLevel } from "./types";
+import * as netTypes from "./networkTypes";
 
-type logFunc = (message: string, level: LoggingLevel) => void;
 
 export class ModemManager {
   private modem: ModemPeripheral;
@@ -15,7 +14,6 @@ export class ModemManager {
   private keepAlive: boolean = true;
   private keepHandle: boolean = true;
   private responseHandlers: netTypes.MessageMapping;
-  private logger: logFunc;
 
   /**
    *
@@ -28,7 +26,6 @@ export class ModemManager {
     replyChannel: number;
     face?: PeripheralFace;
     responseHandlers: netTypes.RequestMapping;
-    loggingFunc: logFunc;
   }) {
     // TODO: make it nicer i guess
     if (options.face !== undefined) {
@@ -44,7 +41,6 @@ export class ModemManager {
     this.modem.closeAll();
 
     this.responseHandlers = options.responseHandlers;
-    this.logger = options.loggingFunc;
 
     this.modem.open(this.broadcastChannel); // open the broadcast channel
     this.modem.open(this.replyChannel); // open the reply channel
@@ -82,7 +78,7 @@ export class ModemManager {
         );
         if (messageEvent !== null && messageEvent.message !== null) {
           let root = messageEvent.message as netTypes.FullModemMessage;
-          this.logger(root.message.type, LoggingLevel.debug);
+          Logger.debug(root.message.type);
           if (root.message.type === "RoleAcquisitionResponse") {
             response = true;
           }
@@ -95,16 +91,10 @@ export class ModemManager {
     parallel.waitForAny(timeout1, timeout2);
 
     if (response) {
-      this.logger(
-        "Response detected... setting role to slave",
-        LoggingLevel.info
-      );
+      Logger.info("Response detected... setting role to slave");
       this.role = NetworkerRole.slave;
     } else {
-      this.logger(
-        "No Response deteced... Assuming role of master",
-        LoggingLevel.info
-      );
+      Logger.info("No Response deteced... Assuming role of master");
       this.role = NetworkerRole.master;
     }
     NetworkerSettings.Set(SettingsKeys.role, this.role);
@@ -114,7 +104,7 @@ export class ModemManager {
   // Loop functions
   public heartbeat(time: number = 15): void {
     while (this.keepAlive) {
-      this.logger("Sending heartbeat...", LoggingLevel.debug);
+      Logger.debug("Sending heartbeat...");
       this.message({
         type: "HeartBeatRequest",
         sender: os.computerID(),
@@ -143,13 +133,12 @@ export class ModemManager {
             this.message(message);
           });
         } else {
-          this.logger(
-            `Unknown handler for message type '${messageType}' ignoring...`,
-            LoggingLevel.warning
+          Logger.warn(
+            `Unknown handler for message type '${messageType}' ignoring...`
           );
         }
       } else {
-        this.logger("message was null", LoggingLevel.error);
+        Logger.error("message was null");
       }
     }
   }

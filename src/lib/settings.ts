@@ -85,7 +85,6 @@ export class NetworkerSettings {
     } else {
       error(`error on loading settings: '${handle[1]}'`);
     }
-    debug.debug();
 
     this.loaded = true;
   }
@@ -98,7 +97,6 @@ export class NetworkerSettings {
       let setting = this.under.get(name);
 
       if (setting === undefined) {
-        debug.debug();
         error("how did we get here?");
       }
       return setting.value !== undefined ? setting.value : setting.default;

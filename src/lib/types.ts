@@ -21,7 +21,13 @@ export interface AppState {
   /**
    * A state to enable the close button to gracefully shut down the app
    */
-  appClose: boolean; 
+  appClose: boolean;
+
+  /**
+   * set to false to disable logging
+   * idk why you would need to
+   */
+  runLogger: boolean;
 }
 
 export enum LoggingLevel {

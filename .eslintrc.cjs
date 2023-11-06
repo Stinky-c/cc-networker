@@ -5,7 +5,7 @@ module.exports = {
     parserOptions: {
         project: ["tsconfig.eslint.json"]
     },
-    plugins: ["@typescript-eslint"],
+    plugins: ["@typescript-eslint", "unused-imports"],
     root: true,
     "rules": {
         "eqeqeq": "error",
@@ -13,6 +13,8 @@ module.exports = {
         "prefer-const": "off",
         "no-constant-condition": "off",
         "@typescript-eslint/no-unused-vars": "off",
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+
+        "unused-imports/no-unused-imports": "error",
     }
 };

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-
+import { LoggingLevel } from "./types";
 export interface IEvent {
   get_name(): string;
   get_args(): any[];
@@ -482,6 +482,29 @@ export class ChatEvent implements IEvent {
     return ev;
   }
 }
+//#region Networker events
+export class LoggingEvent implements IEvent {
+  public level: LoggingLevel = LoggingLevel.info;
+  public message: string = "";
+
+  public get_name() {
+    return "networker_logevent";
+  }
+  public get_args() {
+    return [this.level, this.message];
+  }
+  public static init(args: any[]): LoggingEvent | null {
+    if (!(typeof args[0] === "string") || (args[0] as string) !== "networker_logevent")
+      return null;
+    let ev = new LoggingEvent();
+    ev.level = args[2];
+    ev.message = args[1];
+
+    return ev;
+  }
+}
+
+//#endregion
 
 //#region custom-events
 /*
@@ -535,6 +558,7 @@ const eventInitializers: ((args: any[]) => IEvent | null)[] = [
   GenericEvent.init,
 
   ChatEvent.init,
+  LoggingEvent.init
 ];
 
 type Constructor<T extends object = object> = new (...args: any[]) => T;

@@ -1,3 +1,5 @@
+import { LoggingLevel } from "./types";
+
 export function enumKeys<O extends object, K extends keyof O = keyof O>(
   obj: O
 ): K[] {
@@ -18,4 +20,23 @@ export function blindTrust_tableToMapping(
     }
   }
   return tempMap;
+}
+
+export class Logger {
+  static debug(message: string) {
+    this.log(message, LoggingLevel.debug);
+  }
+  static info(message: string) {
+    this.log(message, LoggingLevel.info);
+  }
+  static warn(message: string) {
+    this.log(message, LoggingLevel.warning);
+  }
+  static error(message: string) {
+    this.log(message, LoggingLevel.error);
+  }
+
+  static log(message: string, level: LoggingLevel) {
+    os.queueEvent("networker_logevent", message, level);
+  }
 }

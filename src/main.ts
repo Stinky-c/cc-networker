@@ -2,6 +2,8 @@
 // module imports
 import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
+import * as event from "./lib/event";
+import { Logger } from "./lib/utils";
 import * as basalt from "bf-lib.basalt";
 
 // type imports
@@ -16,7 +18,11 @@ const THEME: basaltTypes.misc.Theme = {
   MenubarText: colors.white,
 };
 
-const STATE: AppState = { lastHeartbeatResponse: 0, appClose: false };
+const STATE: AppState = {
+  lastHeartbeatResponse: 0,
+  appClose: false,
+  runLogger: true,
+};
 
 //#endregion
 
@@ -85,10 +91,6 @@ let testing = testFrame
   .setText("Click!")
   .onClick((self) => self.hide());
 
-let log = (message: string, level: LoggingLevel) => {
-  loggingField.addLine(`{${os.time()}} [${level}]: ${message}`);
-};
-
 //#region Request & Response mapping
 let requestMapping: netTypes.RequestMapping = new Map([
   [
@@ -100,14 +102,14 @@ let requestMapping: netTypes.RequestMapping = new Map([
         recipent: message.sender,
         type: "HeartBeatResponse",
       } as netTypes.HeartBeatResponse);
-      log(`Heartbeat: '${message.sender}'`, LoggingLevel.debug);
+      Logger.debug(`Heartbeat: '${message.sender}'`);
     },
   ],
   [
     "RoleAcquisitionRequest",
     (_message, sendMessage) => {
       const message = _message as netTypes.RoleAcquisitionRequest;
-      log(`Role Aquire: ${message.sender}`, LoggingLevel.info);
+      Logger.info(`Role Aquire: ${message.sender}`);
       sendMessage({
         sender: UID,
         recipent: message.sender,
@@ -138,9 +140,6 @@ const modem = new ModemManager({
     ...requestMapping.entries(),
     ...responseMapping.entries(),
   ]),
-  loggingFunc(message, level) {
-    log(message, level);
-  },
 });
 
 // Thread handling
@@ -151,16 +150,45 @@ let threadHeartbeat = mainFrame.addThread().start(() => {
 let threadHandleMessage = mainFrame.addThread().start(() => {
   modem.handleMessage();
 });
+/*
+let loggingHandler = mainFrame.addThread().start(() => {
+  while (STATE.runLogger) {
+    basalt.debug("starting logging");
+    // let tmp = os.pullEvent("networker_logevent");
+    let tmp = coroutine.yield("networker_logevent");
+    let logEvent = event.LoggingEvent.init(tmp);
+    // let logEvent = event.pullEventAs(event.LoggingEvent, "networker_logevent");
+    // debug.debug();
+
+    if (logEvent !== null) {
+      loggingField.addLine(
+        `{${os.time()}} [${logEvent.level}]: ${logEvent.message}`
+      );
+    } 
+  }
+});
+*/
+// TODO: event mappings? similar to request/response messages
+// event handling
+mainFrame.onEvent((self, eventName, ...args: any[]) => {
+  if (eventName === "networker_logevent" && STATE.runLogger) {
+    let logEvent = event.LoggingEvent.init([eventName, ...args]);
+    if (logEvent !== null) {
+      loggingField.addLine(
+        `{${os.time()}} [${logEvent.level}]: ${logEvent.message}`
+      );
+    }
+  }
+});
 
 // glory to the start!
 basalt.autoUpdate();
 
 /*
 TODO
-  - close button
+  - close button to safely close the program
   - spilt response/request mapping to seperate file?
-  - 'global-ize' logging
-    - use event system to push and pull logging messages?
+    - how to "inject" needed objects?
   - custom module loader
     - provide basalt frame
   - update to increasing size?
@@ -168,4 +196,10 @@ TODO
     - multi-monitor
       - up to 4?
       - clone / mirror or new frames per each
+  - move req/res messages to class-like objects?
+
+
+  - callback to event system?
+    - events become class objects
+      - a function is called to verify that event names match
 */
