@@ -1,5 +1,8 @@
 import { LoggingLevel, NetworkerEvents } from "./types";
 
+// Value of opertaor
+export type ValueOf<T> = T[keyof T];
+
 export function enumKeys<O extends object, K extends keyof O = keyof O>(
   obj: O
 ): K[] {

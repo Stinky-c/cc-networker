@@ -49,3 +49,19 @@ export type RequestMapping = MessageMapping;
  * Response to my requests
  */
 export type ResponseMapping = MessageMapping;
+
+// new response/request mapping for emitters
+type Wrapper<T extends CommonMessage> = (
+  this: void,
+  message: T,
+  sendMessage: (message: CommonMessageResponse) => void
+) => void;
+
+export type NewResponseMapping = {
+  Heartbeat: Wrapper<HeartBeatResponse>;
+};
+
+export type NewRequestMapping = {
+  Heartbeat: Wrapper<HeartBeatRequest>;
+  RoleAcquisition: Wrapper<RoleAcquisitionRequest>;
+};

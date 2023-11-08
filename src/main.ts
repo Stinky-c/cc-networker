@@ -1,6 +1,6 @@
 /** @noSelfInFile **/
 // module imports
-import { EventRegistry } from "./lib/registry";
+import { EventEmitter } from "./lib/registry";
 
 import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
@@ -9,7 +9,7 @@ import { Logger } from "./lib/utils";
 import * as basalt from "bf-lib.basalt";
 
 // type imports
-import { AppState, LoggingLevel, NetworkerEvents } from "./lib/types";
+import { AppState, LoggingLevel } from "./lib/types";
 import * as basaltTypes from "bf-types.basalt";
 import * as netTypes from "./lib/networkTypes";
 
@@ -37,13 +37,13 @@ let loggingFrame = mainFrame
   .addFrame()
   .setPosition(1, 2)
   .setSize(TERM_X, TERM_Y - 1)
-  .show();
+  .hide();
 
 let testFrame = mainFrame
   .addFrame()
   .setPosition(1, 2)
   .setSize(TERM_X, TERM_Y - 1)
-  .hide();
+  .show();
 
 //#region Begin menubar setup
 
@@ -150,17 +150,13 @@ const modem = new ModemManager({
 });
 
 //#region  Temp
-// events.Networker_LoggingEvent.
-EventRegistry.register(NetworkerEvents.logEvent, (_event) => {
-  // debug.debug();
-  const event = _event as events.Networker_LoggingEvent;
+EventEmitter.on("networker__logevent", (event) => {
   if (STATE.runLogger) {
     loggingField.addLine(`{${os.time()}} [${event.level}]: ${event.message}`);
   }
 });
 
-EventRegistry.register("modem_message", (_event) => {
-  const event = _event as events.ModemMessageEvent;
+EventEmitter.on("modem_message", (event) => {
   modem.handleModemEvent(event);
 });
 
@@ -177,7 +173,7 @@ mainFrame.onEvent((self, eventName, ...args: any[]) => {
   let eventObj = events.eventInit(...[eventName, ...args]);
 
   let name = eventObj.get_name();
-  EventRegistry.call(name, eventObj);
+  EventEmitter.emit(name, eventObj);
 });
 
 // glory to the start!
