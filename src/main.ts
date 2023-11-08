@@ -1,19 +1,21 @@
 /** @noSelfInFile **/
 // module imports
+import { EventRegistry } from "./lib/registry";
+
 import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
-import * as event from "./lib/event";
+import * as events from "./lib/event";
 import { Logger } from "./lib/utils";
 import * as basalt from "bf-lib.basalt";
 
 // type imports
-import { AppState, LoggingLevel } from "./lib/types";
+import { AppState, LoggingLevel, NetworkerEvents } from "./lib/types";
 import * as basaltTypes from "bf-types.basalt";
 import * as netTypes from "./lib/networkTypes";
 
 //#region constants and states
 const UID = NetworkerSettings.Get(SettingsKeys.uid);
-const THEME: basaltTypes.misc.Theme = {
+const THEME: Partial<basaltTypes.misc.Theme> = {
   MenubarBG: colors.green,
   MenubarText: colors.white,
 };
@@ -45,38 +47,43 @@ let testFrame = mainFrame
 
 //#region Begin menubar setup
 
-let subFrames: basaltTypes.baseObjects.BasaltVisualObject[] = [
-  loggingFrame,
-  testFrame,
+let subFrames: { frame: basaltTypes.frame.Frame; name: string }[] = [
+  { frame: loggingFrame, name: "Debug Menu" },
+  { frame: testFrame, name: "Test Menu" },
 ];
-let subFramesNames: string[] = ["Debug Menu", "Test Menu"];
 
 function openSubFrame(index: number) {
+  if (type(index) !== "number") return true;
   const trueIndex = index - 1; // lua is still a 1 index langauge and that does not change here
   // tstl adds one to every slice
+  for (let i of subFrames) {
+    i.frame.hide();
+  }
   if (subFrames[trueIndex] !== undefined) {
-    for (let i of subFrames) {
-      i.hide();
-    }
-    subFrames[trueIndex].show();
+    subFrames[trueIndex].frame.show();
+    Logger.debug(`${subFrames[trueIndex].name} : ${index} : ${trueIndex}`);
   }
 }
 
 let menubar = mainFrame
   .addMenubar()
   .setScrollable(true)
-  .setSize(TERM_X)
-  .onChange((self, value) => openSubFrame(self.getItemIndex()));
+  .setSize(TERM_X, 1)
+  .onChange((self) => {
+    openSubFrame(self.getItemIndex());
+  });
 
-for (let i of subFramesNames) {
-  menubar.addItem(i);
+for (let i of subFrames) {
+  menubar.addItem(i.name);
 }
 //#endregion
-
 let loggingField = loggingFrame
   .addTextfield()
-  .setPosition(1, 2)
+  .setPosition(1, 1)
   .setSize(TERM_X, TERM_Y - 1)
+  .onKey((a, b, key) => {
+    return [keys.up, keys.down, keys.right, keys.left].includes(key);
+  })
   .onKeyUp((a, b, key) => {
     return [keys.up, keys.down, keys.right, keys.left].includes(key);
   })
@@ -142,43 +149,35 @@ const modem = new ModemManager({
   ]),
 });
 
+//#region  Temp
+// events.Networker_LoggingEvent.
+EventRegistry.register(NetworkerEvents.logEvent, (_event) => {
+  // debug.debug();
+  const event = _event as events.Networker_LoggingEvent;
+  if (STATE.runLogger) {
+    loggingField.addLine(`{${os.time()}} [${event.level}]: ${event.message}`);
+  }
+});
+
+EventRegistry.register("modem_message", (_event) => {
+  const event = _event as events.ModemMessageEvent;
+  modem.handleModemEvent(event);
+});
+
+//#endregion
 // Thread handling
 let threadHeartbeat = mainFrame.addThread().start(() => {
   modem.heartbeat(15);
 });
 
-let threadHandleMessage = mainFrame.addThread().start(() => {
-  modem.handleMessage();
-});
-/*
-let loggingHandler = mainFrame.addThread().start(() => {
-  while (STATE.runLogger) {
-    basalt.debug("starting logging");
-    // let tmp = os.pullEvent("networker_logevent");
-    let tmp = coroutine.yield("networker_logevent");
-    let logEvent = event.LoggingEvent.init(tmp);
-    // let logEvent = event.pullEventAs(event.LoggingEvent, "networker_logevent");
-    // debug.debug();
-
-    if (logEvent !== null) {
-      loggingField.addLine(
-        `{${os.time()}} [${logEvent.level}]: ${logEvent.message}`
-      );
-    } 
-  }
-});
-*/
-// TODO: event mappings? similar to request/response messages
 // event handling
 mainFrame.onEvent((self, eventName, ...args: any[]) => {
-  if (eventName === "networker_logevent" && STATE.runLogger) {
-    let logEvent = event.LoggingEvent.init([eventName, ...args]);
-    if (logEvent !== null) {
-      loggingField.addLine(
-        `{${os.time()}} [${logEvent.level}]: ${logEvent.message}`
-      );
-    }
-  }
+  // initalize an event object, even if it is generic to us
+  // someone may have a callback for that event
+  let eventObj = events.eventInit(...[eventName, ...args]);
+
+  let name = eventObj.get_name();
+  EventRegistry.call(name, eventObj);
 });
 
 // glory to the start!
@@ -191,6 +190,7 @@ TODO
     - how to "inject" needed objects?
   - custom module loader
     - provide basalt frame
+    - provide registries
   - update to increasing size?
   - monitor support
     - multi-monitor
@@ -202,4 +202,9 @@ TODO
   - callback to event system?
     - events become class objects
       - a function is called to verify that event names match
+
+
+  # important
+  figure out why menu item names are wrong
+
 */

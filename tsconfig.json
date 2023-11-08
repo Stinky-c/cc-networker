@@ -38,7 +38,7 @@
         "sourceMapTraceback": true,
         "noImplicitSelf": false,
         "noResolvePaths": [
-            "lib.basalt"
+            "lib.basalt",
         ]
     },
     "include": [

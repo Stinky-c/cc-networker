@@ -106,7 +106,7 @@ export class BasaltVisualObject extends BasaltObject {
   getY(): number;
 
   // Size
-  setSize(width?: number | string, height?: number | string): this;
+  setSize(width: number | string, height: number | string): this;
   getSize(): LuaMultiReturn<[number, number]>;
   getWidth(): number;
   getHeight(): number;

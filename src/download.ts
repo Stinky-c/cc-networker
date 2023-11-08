@@ -14,6 +14,7 @@ const index: Array<{ dest: string; uri: string }> = [
   { dest: "lib/settings.lua", uri: "/lib/settings.lua" },
   { dest: "lib/types.lua", uri: "/lib/types.lua" },
   { dest: "lib/utils.lua", uri: "/lib/utils.lua" },
+  { dest: "lib/registry.lua", uri: "/lib/registry.lua" },
 ];
 
 function download(this: void, dest: string, url: string) {

@@ -1,4 +1,3 @@
-import { Container } from "./container";
 import { BasaltVisualObject } from "../object";
 
 import * as objects from "../objects/index";

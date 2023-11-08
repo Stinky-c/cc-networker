@@ -1,4 +1,3 @@
-import { blindTrust_tableToMapping } from "./utils";
 
 export enum SettingsKeys {
   downloadUrl = "networker-downloadurl",

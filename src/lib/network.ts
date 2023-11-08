@@ -1,10 +1,9 @@
 import { PeripheralFace, NetworkerRole } from "./types";
 import { NetworkerSettings, SettingsKeys } from "./settings";
 import { Logger } from "./utils";
-import * as event from "./event";
+import * as events from "./event";
 
 import * as netTypes from "./networkTypes";
-
 
 export class ModemManager {
   private modem: ModemPeripheral;
@@ -12,7 +11,6 @@ export class ModemManager {
   private replyChannel: number = 7704;
   private role: NetworkerRole = NetworkerRole.slave;
   private keepAlive: boolean = true;
-  private keepHandle: boolean = true;
   private responseHandlers: netTypes.MessageMapping;
 
   /**
@@ -72,8 +70,8 @@ export class ModemManager {
 
     let timeout1 = () => {
       while (true) {
-        let messageEvent = event.pullEventAs(
-          event.ModemMessageEvent,
+        let messageEvent = events.pullEventAs(
+          events.ModemMessageEvent,
           "modem_message"
         );
         if (messageEvent !== null && messageEvent.message !== null) {
@@ -114,32 +112,25 @@ export class ModemManager {
   }
 
   // Main handling
-  public handleMessage(): void {
-    while (this.keepHandle) {
-      let messageEvent = event.pullEventAs(
-        event.ModemMessageEvent,
-        "modem_message"
-      );
+  public handleModemEvent(_event: events.ModemMessageEvent): void {
+    if (_event.message !== null) {
+      let event = _event.message as netTypes.FullModemMessage;
+      // if this computer is meant to receive message
+      let messageType = event.message.type;
+      let handle = this.responseHandlers.get(messageType);
 
-      if (messageEvent !== null && messageEvent.message !== null) {
-        let root = messageEvent.message as netTypes.FullModemMessage;
-        // if this computer is meant to receive message
-        let messageType = root.message.type;
-        let handle = this.responseHandlers.get(messageType);
-
-        // handle message if we know what it is else ignore it
-        if (handle !== undefined) {
-          handle(root.message, (message: netTypes.CommonMessageRequest) => {
-            this.message(message);
-          });
-        } else {
-          Logger.warn(
-            `Unknown handler for message type '${messageType}' ignoring...`
-          );
-        }
+      // handle message if we know what it is else ignore it
+      if (handle !== undefined) {
+        handle(event.message, (message: netTypes.CommonMessageRequest) => {
+          this.message(message);
+        });
       } else {
-        Logger.error("message was null");
+        Logger.warn(
+          `Unknown handler for message type '${messageType}' ignoring...`
+        );
       }
+    } else {
+      Logger.error("message was null");
     }
   }
 }

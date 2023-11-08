@@ -36,3 +36,11 @@ export enum LoggingLevel {
   warning = "WARN ",
   error = "ERROR",
 }
+
+/**
+ * All networkers custom logging events
+ * follows the custom of cc but prefixed with `networker__`
+ */
+export enum NetworkerEvents {
+  logEvent = "networker__logevent",
+}

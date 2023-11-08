@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { LoggingLevel } from "./types";
+import { LoggingLevel, NetworkerEvents } from "./types";
 export interface IEvent {
   get_name(): string;
   get_args(): any[];
@@ -483,20 +483,23 @@ export class ChatEvent implements IEvent {
   }
 }
 //#region Networker events
-export class LoggingEvent implements IEvent {
+export class Networker_LoggingEvent implements IEvent {
   public level: LoggingLevel = LoggingLevel.info;
   public message: string = "";
 
   public get_name() {
-    return "networker_logevent";
+    return NetworkerEvents.logEvent;
   }
   public get_args() {
     return [this.level, this.message];
   }
-  public static init(args: any[]): LoggingEvent | null {
-    if (!(typeof args[0] === "string") || (args[0] as string) !== "networker_logevent")
+  public static init(args: any[]): Networker_LoggingEvent | null {
+    if (
+      !(typeof args[0] === "string") ||
+      (args[0] as string) !== NetworkerEvents.logEvent
+    )
       return null;
-    let ev = new LoggingEvent();
+    let ev = new Networker_LoggingEvent();
     ev.level = args[2];
     ev.message = args[1];
 
@@ -529,7 +532,7 @@ export class GenericEvent implements IEvent {
   public get_args() {
     return this.args.slice(1);
   }
-  public static init(args: any[]): IEvent | null {
+  public static init(args: any[]): IEvent {
     const ev = new GenericEvent();
     ev.args = args;
     return ev;
@@ -537,6 +540,7 @@ export class GenericEvent implements IEvent {
 }
 
 const eventInitializers: ((args: any[]) => IEvent | null)[] = [
+  // default cc event
   CharEvent.init,
   KeyEvent.init,
   PasteEvent.init,
@@ -555,13 +559,73 @@ const eventInitializers: ((args: any[]) => IEvent | null)[] = [
   TurtleInventoryEvent.init,
   SpeakerAudioEmptyEvent.init,
   ComputerCommandEvent.init,
-  GenericEvent.init,
 
+  // Custom events
   ChatEvent.init,
-  LoggingEvent.init
+
+  // Custom networker events
+  Networker_LoggingEvent.init,
+
+  // Should always be the final event
+  GenericEvent.init,
 ];
 
+export function eventInit(...args: any[]) {
+  for (const init of eventInitializers) {
+    const ev = init(args);
+    if (ev !== null) return ev;
+  }
+  return GenericEvent.init(args);
+}
+/**
+ * all implemented cc events
+ */
+export enum EventNames {
+  alarm = "alarm",
+  char = "char",
+  computerCommand = "computer_command",
+
+  disk = "disk",
+  diskEject = "disk_eject",
+  fileTransfer = "file_transfer",
+
+  httpCheck = "http_check",
+  httpFailure = "http_failure",
+  httpSuccess = "http_success",
+
+  keyUp = "key_up",
+  key = "key",
+  modemMessage = "modem_message",
+
+  monitorResize = "monitor_resize",
+  monitorTouch = "monitor_touch",
+
+  mouseClick = "mouse_click",
+  mouseDrag = "mouse_drag",
+  mouseScroll = "mouse_scroll",
+  mouseUp = "mouse_up",
+
+  paste = "paste",
+  peripheral = "peripheral",
+  peripheralDetach = "peripheral_detach",
+  rednetMessage = "rednet_message",
+  redstone = "redstone",
+  speakerAudioEmpty = "speaker_audio_empty",
+  taskComplete = "task_complete",
+  terminate = "terminate",
+  timer = "timer",
+  turtleInventory = "turtle_inventory",
+
+  websocketClosed = "websocket_closed",
+  websocketFailure = "websocket_failure",
+  websocketMessage = "websocket_message",
+  websocketSucces = "websocket_success",
+}
+
 type Constructor<T extends object = object> = new (...args: any[]) => T;
+/**
+ * @deprecated Use the registry to let basalt handle events
+ */
 export function pullEventRaw(filter: string | null = null): IEvent | null {
   const args: any[] = coroutine.yield(filter);
   for (const init of eventInitializers) {
@@ -570,11 +634,17 @@ export function pullEventRaw(filter: string | null = null): IEvent | null {
   }
   return GenericEvent.init(args);
 }
+/**
+ * @deprecated Use the registry to let basalt handle events
+ */
 export function pullEvent(filter: string | null = null): IEvent | null {
   const ev = pullEventRaw(filter);
   if (ev instanceof TerminateEvent) throw "Terminated";
   return ev;
 }
+/**
+ * @deprecated Use the registry to let basalt handle events
+ */
 export function pullEventRawAs<T extends IEvent>(
   type: Constructor<T>,
   filter: string | null = null
@@ -583,6 +653,9 @@ export function pullEventRawAs<T extends IEvent>(
   if (ev instanceof type) return ev as T;
   else return null;
 }
+/**
+ * @deprecated Use the registry to let basalt handle events
+ */
 export function pullEventAs<T extends IEvent>(
   type: Constructor<T>,
   filter: string | null = null

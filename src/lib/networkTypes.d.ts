@@ -34,14 +34,12 @@ export interface HeartBeatResponse extends CommonMessageResponse {}
 
 /// Extras
 
-export type MessageMapping = Map<
-  string,
-  (
-    this: void,
-    message: CommonMessageRequest,
-    sendMessage: (message: CommonMessageResponse) => void
-  ) => void
->;
+type MessageFunction = (
+  this: void,
+  message: CommonMessageRequest,
+  sendMessage: (message: CommonMessageResponse) => void
+) => void;
+export type MessageMapping = Map<string, MessageFunction>;
 /**
  * Request from other computers
  */

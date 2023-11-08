@@ -46,6 +46,7 @@ export class List extends BasaltChangeableObject {
     }
   >;
 
+  onSelect(func: (self: this, event: string, item: any) => void): this;
   selectItem(index: number): this;
   clear(): this;
 

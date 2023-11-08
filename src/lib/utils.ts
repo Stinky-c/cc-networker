@@ -1,4 +1,4 @@
-import { LoggingLevel } from "./types";
+import { LoggingLevel, NetworkerEvents } from "./types";
 
 export function enumKeys<O extends object, K extends keyof O = keyof O>(
   obj: O
@@ -37,6 +37,6 @@ export class Logger {
   }
 
   static log(message: string, level: LoggingLevel) {
-    os.queueEvent("networker_logevent", message, level);
+    os.queueEvent(NetworkerEvents.logEvent, message, level);
   }
 }
