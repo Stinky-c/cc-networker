@@ -16,7 +16,7 @@ export interface FullModemMessage {
 interface CommonMessageRequest extends CommonMessage {}
 
 /// Request types
-export interface HeartBeatRequest extends CommonMessageRequest {}
+export interface HeartbeatRequest extends CommonMessageRequest {}
 
 export interface RoleAcquisitionRequest extends CommonMessageRequest {
   assumeRole: false;
@@ -30,38 +30,18 @@ export interface RoleAcquisitionResponse extends CommonMessageResponse {
   assumeRole: false;
 }
 
-export interface HeartBeatResponse extends CommonMessageResponse {}
+export interface HeartbeatResponse extends CommonMessageResponse {}
 
-/// Extras
-
-type MessageFunction = (
-  this: void,
-  message: CommonMessageRequest,
-  sendMessage: (message: CommonMessageResponse) => void
-) => void;
-export type MessageMapping = Map<string, MessageFunction>;
-/**
- * Request from other computers
- */
-export type RequestMapping = MessageMapping;
-
-/**
- * Response to my requests
- */
-export type ResponseMapping = MessageMapping;
-
-// new response/request mapping for emitters
-type Wrapper<T extends CommonMessage> = (
-  this: void,
-  message: T,
-  sendMessage: (message: CommonMessageResponse) => void
-) => void;
-
+// response/request mapping for emitters
+type Wrapper<T extends CommonMessage> = {
+  message: T;
+  sendMessage: (message: CommonMessageResponse) => void;
+};
 export type NewResponseMapping = {
-  Heartbeat: Wrapper<HeartBeatResponse>;
+  HeartBeatResponse: Wrapper<HeartbeatResponse>;
 };
 
 export type NewRequestMapping = {
-  Heartbeat: Wrapper<HeartBeatRequest>;
-  RoleAcquisition: Wrapper<RoleAcquisitionRequest>;
+  HeartbeatRequest: Wrapper<HeartbeatRequest>;
+  RoleAcquisitionRequest: Wrapper<RoleAcquisitionRequest>;
 };

@@ -511,13 +511,13 @@ export class Networker_LoggingEvent implements IEvent {
 
 //#region custom-events
 /*
-class Event implements IEvent {
-    
+export class Event implements IEvent {
+
     public get_name() {return "";}
     public get_args() {return [(: any)];}
     public static init(args: any[]): IEvent | null {
         if (!(typeof args[0] === "string") || (args[0] as string) !=="") return null;
-        let ev: Event;
+        let ev = new this();
 
         return ev;
     }

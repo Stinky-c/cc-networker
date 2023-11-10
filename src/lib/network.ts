@@ -1,3 +1,4 @@
+import { RequestEmitter, ResponseEmitter } from "./registry";
 import { PeripheralFace, NetworkerRole } from "./types";
 import { NetworkerSettings, SettingsKeys } from "./settings";
 import { Logger } from "./utils";
@@ -7,11 +8,10 @@ import * as netTypes from "./networkTypes";
 
 export class ModemManager {
   private modem: ModemPeripheral;
-  private broadcastChannel: number = 7701;
-  private replyChannel: number = 7704;
-  private role: NetworkerRole = NetworkerRole.slave;
-  private keepAlive: boolean = true;
-  private responseHandlers: netTypes.MessageMapping;
+  public broadcastChannel: number = 7701;
+  public replyChannel: number = 7704;
+  public role: NetworkerRole = NetworkerRole.slave;
+  public keepAlive: boolean = true;
 
   /**
    *
@@ -23,7 +23,6 @@ export class ModemManager {
     broadcastChannel: number;
     replyChannel: number;
     face?: PeripheralFace;
-    responseHandlers: netTypes.RequestMapping;
   }) {
     // TODO: make it nicer i guess
     if (options.face !== undefined) {
@@ -38,14 +37,12 @@ export class ModemManager {
     }
     this.modem.closeAll();
 
-    this.responseHandlers = options.responseHandlers;
-
     this.modem.open(this.broadcastChannel); // open the broadcast channel
     this.modem.open(this.replyChannel); // open the reply channel
 
     this.determineRole();
   }
-  public message(message: netTypes.CommonMessageResponse) {
+  public message(message: netTypes.CommonMessage) {
     this.modem.transmit(this.broadcastChannel, this.replyChannel, {
       message: message,
       replyChannel: this.replyChannel,
@@ -106,7 +103,7 @@ export class ModemManager {
       this.message({
         type: "HeartBeatRequest",
         sender: os.computerID(),
-      } as netTypes.HeartBeatRequest);
+      } as netTypes.HeartbeatRequest);
       sleep(time);
     }
   }
@@ -117,18 +114,13 @@ export class ModemManager {
       let event = _event.message as netTypes.FullModemMessage;
       // if this computer is meant to receive message
       let messageType = event.message.type;
-      let handle = this.responseHandlers.get(messageType);
-
-      // handle message if we know what it is else ignore it
-      if (handle !== undefined) {
-        handle(event.message, (message: netTypes.CommonMessageRequest) => {
-          this.message(message);
-        });
-      } else {
-        Logger.warn(
-          `Unknown handler for message type '${messageType}' ignoring...`
-        );
-      }
+      Logger.debug(`Got '${messageType}' handling now...`);
+      let built = {
+        message: event.message,
+        sendMessage: (x: any) => this.message(x),
+      };
+      RequestEmitter.emit(messageType, built);
+      ResponseEmitter.emit(messageType, built);
     } else {
       Logger.error("message was null");
     }

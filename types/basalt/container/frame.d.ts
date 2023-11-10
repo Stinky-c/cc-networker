@@ -25,4 +25,5 @@ export class Frame extends BasaltVisualObject {
   addTextfield(): objects.TextField;
   addList(): objects.List;
   addMenubar(): objects.Menubar;
+  addLabel(): objects.Label;
 }

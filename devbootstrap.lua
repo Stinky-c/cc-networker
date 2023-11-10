@@ -9,7 +9,7 @@ shell.run("wget " .. url .. "/lualib_bundle.lua")
 shell.run("wget " .. url .. "/download.lua")
 
 -- Download basalt minified
-shell.run("wget run https://basalt.madefor.cc/install.lua release basalt-1.6.6.lua /lib/basalt.lua")
+shell.run("wget run https://basalt.madefor.cc/install.lua source /lib/basalt/")
 
 -- Download jackmacwindow's tar library
 shell.run("wget https://cdn.jsdelivr.net/gh/MCJack123/CC-Archive@master/tar.lua /bin/tar.lua")

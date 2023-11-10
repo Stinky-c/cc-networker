@@ -160,4 +160,3 @@ export const EventEmitter = mitt<EventMap>();
 
 export const RequestEmitter = mitt<netTypes.NewRequestMapping>();
 export const ResponseEmitter = mitt<netTypes.NewResponseMapping>();
-

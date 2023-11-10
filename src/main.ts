@@ -1,7 +1,6 @@
 /** @noSelfInFile **/
 // module imports
-import { EventEmitter } from "./lib/registry";
-
+import { EventEmitter, ResponseEmitter, RequestEmitter } from "./lib/registry";
 import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
 import * as events from "./lib/event";
@@ -10,12 +9,11 @@ import * as basalt from "bf-lib.basalt";
 
 // type imports
 import { AppState, LoggingLevel } from "./lib/types";
-import * as basaltTypes from "bf-types.basalt";
 import * as netTypes from "./lib/networkTypes";
+import * as basaltTypes from "bf-types.basalt";
 
 //#region constants and states
 const UID = NetworkerSettings.Get(SettingsKeys.uid);
-// const THEME: Partial<basaltTypes.misc.Theme> = {
 const THEME: basaltTypes.misc.Theme = {
   MenubarBG: colors.green,
   MenubarText: colors.white,
@@ -74,7 +72,6 @@ function openSubFrame(item: {
       i.frame.hide();
     }
     subFrames[trueIndex].frame.show();
-    Logger.debug(`${subFrames[trueIndex].name} : ${index} : ${trueIndex}`);
   }
 }
 
@@ -113,44 +110,30 @@ let testing = subFrames[1].frame
   .setText("Click!")
   .onClick((self) => self.hide());
 
-//#region Request & Response mapping
-let requestMapping: netTypes.RequestMapping = new Map([
-  [
-    "HeartBeatRequest",
-    (_message, sendMessage) => {
-      const message = _message as netTypes.HeartBeatRequest;
-      sendMessage({
-        sender: UID,
-        recipent: message.sender,
-        type: "HeartBeatResponse",
-      } as netTypes.HeartBeatResponse);
-      Logger.debug(`Heartbeat: '${message.sender}'`);
-    },
-  ],
-  [
-    "RoleAcquisitionRequest",
-    (_message, sendMessage) => {
-      const message = _message as netTypes.RoleAcquisitionRequest;
-      Logger.info(`Role Aquire: ${message.sender}`);
-      sendMessage({
-        sender: UID,
-        recipent: message.sender,
-        type: "RoleAcquisitionResponse",
-      } as netTypes.RoleAcquisitionResponse);
-    },
-  ],
-]);
+//#region Request emitters
+RequestEmitter.on("HeartBeatRequest", (g) => {
+  g.sendMessage({
+    sender: UID,
+    recipent: g.message.sender,
+    type: "HeartBeatResponse",
+  } as netTypes.HeartbeatResponse);
+  Logger.debug(`Heartbeat: '${g.message.sender}'`);
+});
+RequestEmitter.on("RoleAcquisitionRequest", (g) => {
+  Logger.info(`Role Aquire: ${g.message.sender}`);
+  g.sendMessage({
+    sender: UID,
+    recipent: g.message.sender,
+    type: "RoleAcquisitionResponse",
+  } as netTypes.RoleAcquisitionResponse);
+});
+//#endregion
 
-let responseMapping: netTypes.ResponseMapping = new Map([
-  [
-    "HeartBeatResponse",
-    (_message, sendMessage) => {
-      const message = _message as netTypes.HeartBeatResponse;
-      let time = os.time();
-      STATE.lastHeartbeatResponse = time;
-    },
-  ],
-]);
+//#region Response Emitters
+ResponseEmitter.on("HeartBeatResponse", (g) => {
+  let time = os.time();
+  STATE.lastHeartbeatResponse = time;
+});
 //#endregion
 
 const modem = new ModemManager({
@@ -158,10 +141,6 @@ const modem = new ModemManager({
     SettingsKeys.broadcastChannel
   ) as number,
   replyChannel: NetworkerSettings.Get(SettingsKeys.replyChannel) as number,
-  responseHandlers: new Map([
-    ...requestMapping.entries(),
-    ...responseMapping.entries(),
-  ]),
 });
 
 //#region  Event emitters
@@ -191,6 +170,9 @@ mainFrame.onEvent((self, eventName, ...args: any[]) => {
   EventEmitter.emit(name, eventObj);
 });
 
+// test
+subFrames[2].frame.addLabel().setText(modem.role as unknown as string);
+
 // glory to the start!
 basalt.autoUpdate();
 
@@ -215,7 +197,5 @@ TODO
       - a function is called to verify that event names match
 
 
-  # important
-  figure out why menu item names are wrong
 
 */
