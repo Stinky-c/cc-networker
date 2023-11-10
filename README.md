@@ -5,11 +5,11 @@ Uses CC:Tweaked modems to communicate to a primary manager for use in displaying
 ## Project layout
 
 - `src` - the root for all typescript files
-- `types` - contains types for used packages/mods
+- `types` - contains types for used packages/libraries/mods
 
 ## Quick download
 
-Download and run `bootstrap.lua` to bootstrap a master server
+Download and run `bootstrap.lua` to bootstrap a server or client
 
 ## TODO
 
@@ -18,6 +18,7 @@ Download and run `bootstrap.lua` to bootstrap a master server
     - <https://github.com/MCJack123/CC-Archive>
 - document basalt **ALL** basalt types
 - finish basalt types, create UI
+- pin basalt version
 
 ## How to create a devlopment environment
 

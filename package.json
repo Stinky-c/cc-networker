@@ -1,5 +1,5 @@
 {
-  "name": "cc-tstl-template",
+  "name": "cc-networker",
   "version": "1.102.2",
   "description": "Template project for ComputerCraft programs written in TypeScript.",
   "main": "main.ts",
@@ -23,6 +23,6 @@
     "ts-node": "^10.9.1",
     "typescript": "^5.2.2"
   },
-  "author": "JackMacWindows",
+  "author": "Buckydev",
   "license": "MIT"
 }

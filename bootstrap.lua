@@ -1,3 +1,4 @@
+error("This installer is incomplete, and will not install the project currently, please check back later")
 local URL = "https://cdn.jsdelivr.net/gh/Stinky-c/cc-networker@master"
 
 -- Download networker downloader
