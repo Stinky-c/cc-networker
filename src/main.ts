@@ -15,7 +15,8 @@ import * as netTypes from "./lib/networkTypes";
 
 //#region constants and states
 const UID = NetworkerSettings.Get(SettingsKeys.uid);
-const THEME: Partial<basaltTypes.misc.Theme> = {
+// const THEME: Partial<basaltTypes.misc.Theme> = {
+const THEME: basaltTypes.misc.Theme = {
   MenubarBG: colors.green,
   MenubarText: colors.white,
 };
@@ -43,23 +44,35 @@ let testFrame = mainFrame
   .addFrame()
   .setPosition(1, 2)
   .setSize(TERM_X, TERM_Y - 1)
-  .show();
+  .hide();
 
+let test2Frame = mainFrame
+  .addFrame()
+  .setPosition(1, 2)
+  .setSize(TERM_X, TERM_Y - 1)
+  .hide();
+
+// put external code loading here?
+// to allow generating frames and adding them to the list
 //#region Begin menubar setup
 
 let subFrames: { frame: basaltTypes.frame.Frame; name: string }[] = [
   { frame: loggingFrame, name: "Debug Menu" },
   { frame: testFrame, name: "Test Menu" },
+  { frame: test2Frame, name: "Test 2" },
 ];
 
-function openSubFrame(index: number) {
-  if (type(index) !== "number") return true;
-  const trueIndex = index - 1; // lua is still a 1 index langauge and that does not change here
-  // tstl adds one to every slice
-  for (let i of subFrames) {
-    i.frame.hide();
-  }
+function openSubFrame(item: {
+  bgCol: Color;
+  fgCol: Color;
+  text: string;
+  args: any;
+}) {
+  const trueIndex: number = item.args[1];
   if (subFrames[trueIndex] !== undefined) {
+    for (let i of subFrames) {
+      i.frame.hide();
+    }
     subFrames[trueIndex].frame.show();
     Logger.debug(`${subFrames[trueIndex].name} : ${index} : ${trueIndex}`);
   }
@@ -69,15 +82,17 @@ let menubar = mainFrame
   .addMenubar()
   .setScrollable(true)
   .setSize(TERM_X, 1)
-  .onChange((self) => {
-    openSubFrame(self.getItemIndex());
+  .setBackground(THEME.MenubarBG as number)
+  .onChange((x, y, z) => {
+    openSubFrame(z);
   });
 
-for (let i of subFrames) {
-  menubar.addItem(i.name);
-}
+let test = subFrames.map((x, index) => {
+  return [x.name, THEME.MenubarBG, THEME.MenubarText, [index]];
+});
+menubar.setOptions(test);
 //#endregion
-let loggingField = loggingFrame
+let loggingField = subFrames[0].frame
   .addTextfield()
   .setPosition(1, 1)
   .setSize(TERM_X, TERM_Y - 1)
@@ -91,7 +106,7 @@ let loggingField = loggingFrame
   .addKeywords(colors.green, [LoggingLevel.info])
   .addKeywords(colors.blue, [LoggingLevel.debug]);
 
-let testing = testFrame
+let testing = subFrames[1].frame
   .addButton()
   .setPosition(3, 3)
   .setSize(7, 3)
@@ -149,7 +164,7 @@ const modem = new ModemManager({
   ]),
 });
 
-//#region  Temp
+//#region  Event emitters
 EventEmitter.on("networker__logevent", (event) => {
   if (STATE.runLogger) {
     loggingField.addLine(`{${os.time()}} [${event.level}]: ${event.message}`);

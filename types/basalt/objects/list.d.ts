@@ -25,7 +25,7 @@ export class List extends BasaltChangeableObject {
 
   getItem(index: number): ItemTable;
   getItemCount(): number;
-
+  /*
   setOptions(
     ...args:
       | string[]
@@ -36,6 +36,12 @@ export class List extends BasaltChangeableObject {
           value?: any;
         }[]
   ): this;
+  */
+  /**
+   * TODO: find better typing for this
+   * expects to be like an item present on the list, but in a list
+   */
+  setOptions(arg: any): this;
   getOptions(): LuaTable<
     number,
     {

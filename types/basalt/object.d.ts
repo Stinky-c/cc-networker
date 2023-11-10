@@ -237,6 +237,6 @@ export class BasaltChangeableObject extends BasaltVisualObject {
   getValue(): any;
 
   onChange(
-    func: (this: void, self: this, event: any, value: any) => boolean | void
+    func: (this: void, self: this, event: string, value: any) => boolean | void
   ): this;
 }
