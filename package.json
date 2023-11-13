@@ -1,7 +1,7 @@
 {
   "name": "cc-networker",
   "version": "1.102.2",
-  "description": "Template project for ComputerCraft programs written in TypeScript.",
+  "description": "A node based network application for displaying data in Minecraft using CC:Tweaked and Typescript",
   "main": "main.ts",
   "scripts": {
     "lint": "eslint",

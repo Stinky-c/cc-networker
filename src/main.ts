@@ -8,7 +8,7 @@ import { Logger } from "./lib/utils";
 import * as basalt from "bf-lib.basalt";
 
 // type imports
-import { AppState, LoggingLevel } from "./lib/types";
+import { AppState, LoggingLevel, NetworkerRole } from "./lib/types";
 import * as netTypes from "./lib/networkTypes";
 import * as basaltTypes from "bf-types.basalt";
 
@@ -119,19 +119,23 @@ RequestEmitter.on("HeartBeatRequest", (g) => {
   } as netTypes.HeartbeatResponse);
   Logger.debug(`Heartbeat: '${g.message.sender}'`);
 });
+
 RequestEmitter.on("RoleAcquisitionRequest", (g) => {
-  Logger.info(`Role Aquire: ${g.message.sender}`);
-  g.sendMessage({
-    sender: UID,
-    recipent: g.message.sender,
-    type: "RoleAcquisitionResponse",
-  } as netTypes.RoleAcquisitionResponse);
+  // shouldnt be sent very often so getting from settings shouldn't cause issues
+  if (NetworkerSettings.Get(SettingsKeys.role) === NetworkerRole.master) {
+    Logger.info(`Role Aquire: ${g.message.sender}`);
+    g.sendMessage({
+      sender: UID,
+      recipent: g.message.sender,
+      type: "RoleAcquisitionResponse",
+    } as netTypes.RoleAcquisitionResponse);
+  }
 });
 //#endregion
 
 //#region Response Emitters
 ResponseEmitter.on("HeartBeatResponse", (g) => {
-  let time = os.time();
+  let time = os.clock();
   STATE.lastHeartbeatResponse = time;
 });
 //#endregion
@@ -143,10 +147,10 @@ const modem = new ModemManager({
   replyChannel: NetworkerSettings.Get(SettingsKeys.replyChannel) as number,
 });
 
-//#region  Event emitters
+//#region Event emitters
 EventEmitter.on("networker__logevent", (event) => {
   if (STATE.runLogger) {
-    loggingField.addLine(`{${os.time()}} [${event.level}]: ${event.message}`);
+    loggingField.addLine(`{${os.clock()}} [${event.level}]: ${event.message}`);
   }
 });
 
@@ -171,7 +175,7 @@ mainFrame.onEvent((self, eventName, ...args: any[]) => {
 });
 
 // test
-subFrames[2].frame.addLabel().setText(modem.role as unknown as string);
+subFrames[2].frame.addLabel().setText(modem.role.toString());
 
 // glory to the start!
 basalt.autoUpdate();
