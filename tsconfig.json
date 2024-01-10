@@ -12,25 +12,13 @@
             "@jackmacwindows/lua-types/cc",
             "@jackmacwindows/craftos-types",
             "@jackmacwindows/cc-types",
+            "@buckydev/basalt-types"
         ],
         "outDir": "dist/",
         "sourceMap": false,
         "sourceRoot": "src/",
         "inlineSourceMap": true,
         "baseUrl": "./",
-        "paths": {
-            "bf-lib.basalt": [
-                "./types/basalt/basalt.d.ts",
-            ],
-            "bf-types.basalt": [
-                "./types/basalt/index.d.ts",
-            ]
-        },
-        "plugins": [
-            {
-                "transform": "./scripts/transformImport.ts"
-            }
-        ]
     },
     "tstl": {
         "luaTarget": "CC",
@@ -39,7 +27,10 @@
         "noImplicitSelf": false,
         "noResolvePaths": [
             "lib.basalt",
-        ]
+            "@buckydev/basalt-types"
+        ],
+        "luaBundle": "tmp/",
+        "luaBundleEntry": "src/main.ts"
     },
     "include": [
         "src/*.ts",

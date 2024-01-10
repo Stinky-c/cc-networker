@@ -5,12 +5,14 @@ import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
 import * as events from "./lib/event";
 import { Logger } from "./lib/utils";
-import * as basalt from "bf-lib.basalt";
+// import * as basalt from "bf-lib.basalt";
+import { Basalt } from "@buckydev/basalt-types";
 
 // type imports
 import { AppState, LoggingLevel, NetworkerRole } from "./lib/types";
-import * as netTypes from "./lib/networkTypes";
-import * as basaltTypes from "bf-types.basalt";
+import type * as netTypes from "./lib/networkTypes";
+// import * as basaltTypes from "bf-types.basalt";
+import type * as basaltTypes from "@buckydev/basalt-types/";
 
 //#region constants and states
 const UID = NetworkerSettings.Get(SettingsKeys.uid);
@@ -30,7 +32,7 @@ const STATE: AppState = {
 // init settings and frames
 NetworkerSettings.Load();
 let [TERM_X, TERM_Y] = term.getSize();
-let mainFrame = basalt.createFrame().setSize(TERM_X, TERM_Y).setTheme(THEME);
+let mainFrame = Basalt.createFrame().setSize(TERM_X, TERM_Y).setTheme(THEME);
 
 let loggingFrame = mainFrame
   .addFrame()
@@ -178,7 +180,7 @@ mainFrame.onEvent((self, eventName, ...args: any[]) => {
 subFrames[2].frame.addLabel().setText(modem.role.toString());
 
 // glory to the start!
-basalt.autoUpdate();
+Basalt.autoUpdate();
 
 /*
 TODO

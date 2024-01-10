@@ -1,5 +1,5 @@
 {
-    "name": "@buckydev/cc-basalt-types",
+    "name": "@buckydev/basalt-types",
     "version": "1.0.0",
     "description": "TypeScript type definitions for the basalt UI library.",
     "types": "index.d.ts",
