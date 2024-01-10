@@ -22,15 +22,15 @@
     },
     "tstl": {
         "luaTarget": "CC",
-        "luaLibImport": "require",
+        "luaLibImport": "require-minimal",
         "sourceMapTraceback": true,
         "noImplicitSelf": false,
         "noResolvePaths": [
             "lib.basalt",
             "@buckydev/basalt-types"
         ],
-        "luaBundle": "tmp/",
-        "luaBundleEntry": "src/main.ts"
+        // "luaBundle": "tmp.lua",
+        // "luaBundleEntry": "src/main.ts"
     },
     "include": [
         "src/*.ts",
