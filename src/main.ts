@@ -5,14 +5,12 @@ import { ModemManager } from "./lib/network";
 import { NetworkerSettings, SettingsKeys } from "./lib/settings";
 import * as events from "./lib/event";
 import { Logger } from "./lib/utils";
-// import * as basalt from "bf-lib.basalt";
-import { Basalt } from "@buckydev/basalt-types";
+import * as Basalt from "@local-lib/basalt";
 
 // type imports
 import { AppState, LoggingLevel, NetworkerRole } from "./lib/types";
 import type * as netTypes from "./lib/networkTypes";
-// import * as basaltTypes from "bf-types.basalt";
-import type * as basaltTypes from "@buckydev/basalt-types/";
+import type * as basaltTypes from "@local-lib/basalt";
 
 //#region constants and states
 const UID = NetworkerSettings.Get(SettingsKeys.uid);
@@ -26,7 +24,7 @@ const STATE: AppState = {
   appClose: false,
   runLogger: true,
 };
-
+ 
 //#endregion
 
 // init settings and frames

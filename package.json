@@ -10,11 +10,11 @@
     "serve": "cd dist/ && python -m http.server 9001"
   },
   "devDependencies": {
+    "@buckydev/advanced-peripherals": "file:types/AdvancedPeripherals",
+    "@local-lib/basalt": "file:types/basalt-types",
     "@jackmacwindows/cc-types": "file:types/cc",
     "@jackmacwindows/craftos-types": "file:types/craftos",
     "@jackmacwindows/lua-types": "^2.13.1",
-    "@buckydev/basalt-types": "file:types/basalt-types",
-    "@buckydev/advanced-peripherals": "file:types/AdvancedPeripherals",
     "@jackmacwindows/typescript-to-lua": "github:Stinky-c/TypeScriptToLua",
     "@typescript-eslint/eslint-plugin": "^6.9.1",
     "@typescript-eslint/parser": "^6.8.0",

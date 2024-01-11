@@ -1,11 +1,6 @@
-// export * as frame from "./container/frame";
-// export * as objects from "./objects/index";
-// export * as baseObjects from "./object";
-// export * as misc from "./misc";
+export * from "./basalt";
 
-export * as Basalt from "./basalt";
-
-export * as frame from "./container/frame";
-export * as objects from "./objects/index";
-export * as baseObjects from "./object";
-export * as misc from "./misc";
+export type * as frame from "./container/frame";
+export type * as objects from "./objects/index";
+export type * as baseObjects from "./object";
+export type * as misc from "./misc";

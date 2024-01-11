@@ -1,6 +1,6 @@
 // transformer1-module
 import * as ts from "typescript";
-export default function (program: ts.Program, pluginOptions: {}) {
+export default function (program: ts.Program, pluginOptions: unknown) {
   return (ctx: ts.TransformationContext) => {
     return (sourceFile: ts.SourceFile) => {
       function visitor(node: ts.Node): ts.Node {

@@ -8,6 +8,9 @@
         "./container/*.d.ts",
         "./objects/*.d.ts"
     ],
+    "scripts": {
+        "preinstall": "wget https://raw.githubusercontent.com/Pyroxenium/Basalt/master/docs/versions/basalt-1.7.1.lua -O index.lua"
+    },
     "author": "buckydev",
     "license": "MIT",
     "dependencies": {
